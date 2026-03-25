@@ -3,280 +3,334 @@
 <html class="dark" lang="en"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Kinetic Ether | Performance HUD</title>
+<title>Kinetic Ether | Performance Interface</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&amp;family=Inter:wght@400;500&amp;family=Space_Grotesk:wght@500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&amp;family=Inter:wght@400;500;600&amp;family=Space+Grotesk:wght@400;700&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    colors: {
-                        "on-secondary-fixed-variant": "#006a2d",
-                        "on-primary": "#47007c",
-                        "on-background": "#f9f5f8",
-                        "on-primary-fixed": "#000000",
-                        "on-primary-fixed-variant": "#430076",
-                        "error-dim": "#d73357",
-                        "primary-container": "#c284ff",
-                        "primary-fixed": "#c284ff",
-                        "primary-dim": "#9c48ea",
-                        "secondary-fixed-dim": "#5bf083",
-                        "on-error": "#490013",
-                        "on-surface": "#f9f5f8",
-                        "surface-variant": "#262528",
-                        "inverse-on-surface": "#565457",
-                        "on-primary-container": "#360061",
-                        "inverse-primary": "#842cd3",
-                        "error": "#ff6e84",
-                        "on-tertiary-container": "#555758",
-                        "on-tertiary": "#5e5f60",
-                        "tertiary-fixed": "#fcfcfd",
-                        "surface-container-highest": "#262528",
-                        "on-surface-variant": "#adaaad",
-                        "on-tertiary-fixed": "#4d4f50",
-                        "on-tertiary-fixed-variant": "#6a6b6d",
-                        "tertiary-fixed-dim": "#eeeeef",
-                        "on-secondary": "#005f28",
-                        "surface-dim": "#0e0e10",
-                        "surface-container": "#19191c",
-                        "secondary-fixed": "#6bff8f",
-                        "on-error-container": "#ffb2b9",
-                        "outline": "#767577",
-                        "tertiary-container": "#ebebec",
-                        "tertiary": "#f9f9fa",
-                        "secondary-dim": "#5bf083",
-                        "surface-container-high": "#1f1f22",
-                        "on-secondary-fixed": "#004a1d",
-                        "error-container": "#a70138",
-                        "on-secondary-container": "#e4ffe2",
-                        "outline-variant": "#48474a",
-                        "secondary-container": "#006e2f",
-                        "inverse-surface": "#fcf8fb",
-                        "secondary": "#6bff8f",
-                        "tertiary-dim": "#ebebec",
-                        "surface-tint": "#cc97ff",
-                        "primary": "#cc97ff",
-                        "surface": "#0e0e10",
-                        "primary-fixed-dim": "#b971ff",
-                        "surface-container-lowest": "#000000",
-                        "surface-container-low": "#131315",
-                        "background": "#0e0e10",
-                        "surface-bright": "#2c2c2f"
-                    },
-                    fontFamily: {
-                        "headline": ["Manrope"],
-                        "body": ["Inter"],
-                        "label": ["Space Grotesk"]
-                    },
-                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
-                },
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "surface-container": "#19191c",
+              "error": "#ff6e84",
+              "on-primary-container": "#360061",
+              "tertiary-dim": "#ebebec",
+              "on-background": "#f9f5f8",
+              "on-primary-fixed": "#000000",
+              "on-secondary-fixed": "#004a1d",
+              "surface-tint": "#cc97ff",
+              "secondary-dim": "#5bf083",
+              "primary-dim": "#9c48ea",
+              "error-container": "#a70138",
+              "on-surface": "#f9f5f8",
+              "surface-container-high": "#1f1f22",
+              "secondary-fixed": "#6bff8f",
+              "on-tertiary-fixed-variant": "#6a6b6d",
+              "inverse-primary": "#842cd3",
+              "surface-container-lowest": "#000000",
+              "surface": "#0e0e10",
+              "background": "#0e0e10",
+              "tertiary": "#f9f9fa",
+              "secondary": "#6bff8f",
+              "on-primary-fixed-variant": "#430076",
+              "tertiary-container": "#ebebec",
+              "on-secondary-container": "#e4ffe2",
+              "surface-bright": "#2c2c2f",
+              "primary-fixed-dim": "#b971ff",
+              "outline": "#767577",
+              "on-tertiary-fixed": "#4d4f50",
+              "on-primary": "#47007c",
+              "secondary-fixed-dim": "#5bf083",
+              "surface-container-highest": "#262528",
+              "on-secondary-fixed-variant": "#006a2d",
+              "surface-container-low": "#131315",
+              "on-surface-variant": "#adaaad",
+              "surface-dim": "#0e0e10",
+              "on-tertiary-container": "#555758",
+              "on-secondary": "#005f28",
+              "on-tertiary": "#5e5f60",
+              "inverse-on-surface": "#565457",
+              "on-error": "#490013",
+              "primary-container": "#c284ff",
+              "primary": "#cc97ff",
+              "inverse-surface": "#fcf8fb",
+              "outline-variant": "#48474a",
+              "tertiary-fixed": "#fcfcfd",
+              "on-error-container": "#ffb2b9",
+              "error-dim": "#d73357",
+              "tertiary-fixed-dim": "#eeeeef",
+              "surface-variant": "#262528",
+              "primary-fixed": "#c284ff",
+              "secondary-container": "#006e2f"
             },
-        }
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Space Grotesk"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
     </script>
 <style>
         .material-symbols-outlined {
             font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
         }
         .glass-panel {
-            background: rgba(44, 44, 47, 0.4);
-            backdrop-filter: blur(16px);
-            border: 1px solid rgba(72, 71, 74, 0.15);
+            background: rgba(25, 25, 28, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
         }
-        .neon-glow-purple {
-            box-shadow: 0 0 20px rgba(168, 85, 247, 0.15);
+        .text-glow-primary {
+            text-shadow: 0 0 12px rgba(204, 151, 255, 0.4);
         }
-        ::-webkit-scrollbar {
-            width: 4px;
+        .text-glow-secondary {
+            text-shadow: 0 0 12px rgba(107, 255, 143, 0.4);
         }
-        ::-webkit-scrollbar-track {
-            background: #000000;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #48474a;
-            border-radius: 10px;
-        }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #0e0e10; }
+        ::-webkit-scrollbar-thumb { background: #48474a; border-radius: 10px; }
     </style>
 </head>
-<body class="bg-surface-container-lowest text-on-surface font-body selection:bg-primary/30">
-<!-- TopAppBar -->
-<header class="fixed top-0 w-full z-50 flex justify-between items-center px-6 py-4 bg-neutral-950/60 backdrop-blur-xl bg-gradient-to-b from-neutral-900 to-transparent">
-<div class="flex items-center gap-4">
-<span class="text-xl font-black tracking-tighter text-purple-400 uppercase font-headline">KINETIC ETHER</span>
+<body class="bg-background text-on-background font-body selection:bg-primary/30">
+<!-- Top Navigation Anchor -->
+<header class="fixed top-0 w-full z-50 flex justify-between items-center px-6 h-20 bg-gradient-to-b from-[#131315] to-transparent shadow-[0_10px_30px_-15px_rgba(204,151,255,0.1)]">
+<div class="text-2xl font-bold tracking-tighter text-[#cc97ff] font-['Manrope']">Kinetic Ether</div>
+<!-- 7-Day Calendar Navigation -->
+<div class="hidden md:flex items-center gap-4 bg-surface-container/50 px-6 py-2 rounded-full border border-outline-variant/10">
+<button class="material-symbols-outlined text-[#f9f5f8]/60 hover:text-[#cc97ff] transition-all">chevron_left</button>
+<div class="flex gap-4">
+<div class="flex flex-col items-center opacity-40">
+<span class="font-label text-[10px] uppercase">Mon</span>
+<span class="font-headline font-bold">12</span>
 </div>
-<!-- Date Navigation Strip -->
-<div class="hidden md:flex items-center gap-1 bg-surface-container-low p-1 rounded-xl">
-<button class="w-10 h-10 flex flex-col items-center justify-center rounded-lg text-neutral-500 hover:text-primary transition-colors">
-<span class="text-[10px] font-label uppercase">Mon</span>
-<span class="font-bold">12</span>
-</button>
-<button class="w-10 h-10 flex flex-col items-center justify-center rounded-lg text-neutral-500 hover:text-primary transition-colors">
-<span class="text-[10px] font-label uppercase">Tue</span>
-<span class="font-bold">13</span>
-</button>
-<button class="w-10 h-10 flex flex-col items-center justify-center rounded-lg bg-primary-container/20 text-purple-400 border border-primary/20">
-<span class="text-[10px] font-label uppercase">Wed</span>
-<span class="font-bold">14</span>
-</button>
-<button class="w-10 h-10 flex flex-col items-center justify-center rounded-lg text-neutral-500 hover:text-primary transition-colors">
-<span class="text-[10px] font-label uppercase">Thu</span>
-<span class="font-bold">15</span>
-</button>
-<button class="w-10 h-10 flex flex-col items-center justify-center rounded-lg text-neutral-500 hover:text-primary transition-colors">
-<span class="text-[10px] font-label uppercase">Fri</span>
-<span class="font-bold">16</span>
-</button>
-<button class="w-10 h-10 flex flex-col items-center justify-center rounded-lg text-neutral-500 hover:text-primary transition-colors">
-<span class="text-[10px] font-label uppercase">Sat</span>
-<span class="font-bold">17</span>
-</button>
-<button class="w-10 h-10 flex flex-col items-center justify-center rounded-lg text-neutral-500 hover:text-primary transition-colors">
-<span class="text-[10px] font-label uppercase">Sun</span>
-<span class="font-bold">18</span>
-</button>
+<div class="flex flex-col items-center opacity-40">
+<span class="font-label text-[10px] uppercase">Tue</span>
+<span class="font-headline font-bold">13</span>
+</div>
+<div class="flex flex-col items-center text-[#cc97ff] font-bold">
+<span class="font-label text-[10px] uppercase">Wed</span>
+<span class="font-headline font-bold">14</span>
+</div>
+<div class="flex flex-col items-center opacity-40">
+<span class="font-label text-[10px] uppercase">Thu</span>
+<span class="font-headline font-bold">15</span>
+</div>
+<div class="flex flex-col items-center opacity-40">
+<span class="font-label text-[10px] uppercase">Fri</span>
+<span class="font-headline font-bold">16</span>
+</div>
+</div>
+<button class="material-symbols-outlined text-[#f9f5f8]/60 hover:text-[#cc97ff] transition-all">chevron_right</button>
 </div>
 <div class="flex items-center gap-4">
-<button class="p-2 text-purple-400 hover:text-purple-300 transition-colors scale-95 active:scale-90">
-<span class="material-symbols-outlined">sync</span>
-</button>
-<button class="p-2 text-purple-400 hover:text-purple-300 transition-colors scale-95 active:scale-90">
-<span class="material-symbols-outlined">calendar_today</span>
-</button>
+<button class="p-2 rounded-full hover:bg-[#1f1f22] transition-all"><span class="material-symbols-outlined">sync</span></button>
+<button class="p-2 rounded-full hover:bg-[#1f1f22] transition-all"><span class="material-symbols-outlined">today</span></button>
+<div class="w-10 h-10 rounded-full bg-primary-container overflow-hidden border border-primary/20">
+<img alt="Profile" data-alt="professional athletic woman portrait with dramatic lighting and violet highlights" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBbosuaQuKFa7AS0-UcgC0ibBQt8XEF8aB4n_LyW9MNuvXXxeiK-vO4c1tajXaq5Ny8fAtxZ-8RM8viDMcpqRa3QMTyz7gtymfyvc9XRwemu8zEqqNZdFbM8GMe1lZMC3PYqnQMDVwziOPJmHQUGl3n9f59knNPIFNc919ZtMBmdIhJWN1WTTP7w2PJhy83h8nsclx_luh1ValwYKPW--ElOWbD2ED-nPgIf_bFnDgHDoUQQiHDj5RHYur4R_0F3BbyEGENfUxR7d1D"/>
+</div>
 </div>
 </header>
-<main class="pt-24 pb-32 px-6 max-w-7xl mx-auto min-h-screen">
-<div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-<!-- Left Column: Fasting Section -->
-<section class="space-y-8">
-<div class="flex items-baseline justify-between mb-4">
-<h2 class="font-headline text-3xl font-extrabold tracking-tight text-on-surface">Fasting HUD</h2>
-<span class="font-label text-secondary text-sm tracking-widest uppercase">State: Autophagy</span>
+<main class="pt-24 pb-32 px-6 max-w-[1600px] mx-auto space-y-8">
+<!-- TOP SECTION: FASTING (Full Width) -->
+<section class="relative overflow-hidden rounded-3xl p-8 glass-panel border border-primary/10 shadow-2xl">
+<div class="absolute top-0 right-0 p-8 opacity-10">
+<span class="material-symbols-outlined text-[120px]" style="font-variation-settings: 'FILL' 1;">timer</span>
 </div>
-<div class="glass-panel rounded-[2rem] p-10 flex flex-col items-center justify-center relative overflow-hidden">
-<!-- Progress Ring Background -->
-<div class="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_center,var(--tw-gradient-stops))] from-primary via-transparent to-transparent"></div>
-<div class="relative w-64 h-64 flex items-center justify-center">
-<svg class="w-full h-full -rotate-90">
-<circle class="text-surface-variant/20" cx="128" cy="128" fill="transparent" r="110" stroke="currentColor" stroke-width="8"></circle>
-<circle class="text-primary drop-shadow-[0_0_8px_rgba(204,151,255,0.5)]" cx="128" cy="128" fill="transparent" r="110" stroke="currentColor" stroke-dasharray="691" stroke-dashoffset="200" stroke-linecap="round" stroke-width="8"></circle>
-</svg>
-<div class="absolute inset-0 flex flex-col items-center justify-center">
-<span class="font-label text-5xl font-bold tracking-tighter text-on-surface">14:22:08</span>
-<span class="font-label text-xs uppercase tracking-[0.2em] text-on-surface-variant mt-2">Target: 16:00</span>
+<div class="relative z-10 flex flex-col md:flex-row justify-between items-end mb-10 gap-6">
+<div class="space-y-1">
+<h2 class="font-label text-secondary tracking-[0.2em] uppercase text-xs font-bold">Current Protocol: Intermittent 16:8</h2>
+<div class="flex items-baseline gap-4">
+<span class="font-headline text-6xl font-extrabold tracking-tighter text-glow-primary">14:22:45</span>
+<span class="font-label text-on-surface-variant text-xl">/ 16:00:00</span>
 </div>
 </div>
-<div class="mt-12 w-full grid grid-cols-2 gap-4">
-<button class="bg-gradient-to-br from-primary to-primary-dim text-on-primary-fixed font-headline font-bold py-4 px-6 rounded-xl hover:shadow-[0_0_25px_rgba(204,151,255,0.3)] transition-all active:scale-95">
-                            Start Fasting Session
-                        </button>
-<button class="bg-surface-container-high border border-outline-variant/30 text-on-surface font-headline font-bold py-4 px-6 rounded-xl hover:bg-surface-bright transition-all active:scale-95">
-                            Log Entry
-                        </button>
+<div class="flex flex-wrap gap-3">
+<button class="px-6 py-3 rounded-xl bg-gradient-to-br from-primary to-primary-dim text-on-primary-fixed font-bold flex items-center gap-2 hover:shadow-[0_0_20px_rgba(204,151,255,0.4)] transition-all active:scale-95">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+                        Start Session
+                    </button>
+<button class="px-6 py-3 rounded-xl bg-surface-container-highest border border-outline-variant/30 text-on-surface font-semibold flex items-center gap-2 hover:bg-surface-bright transition-all">
+<span class="material-symbols-outlined text-sm">pause</span>
+                        Pause
+                    </button>
+<button class="px-6 py-3 rounded-xl bg-surface-container-highest border border-outline-variant/30 text-on-surface font-semibold flex items-center gap-2 hover:bg-surface-bright transition-all">
+<span class="material-symbols-outlined text-sm">history</span>
+                        Log Entry
+                    </button>
 </div>
-<!-- Offset Inputs -->
-<div class="mt-8 w-full grid grid-cols-2 gap-4">
-<div class="group">
-<label class="font-label text-[10px] uppercase tracking-widest text-on-surface-variant ml-1 mb-1 block">Start Time</label>
-<input class="w-full bg-surface-container-highest border-none rounded-xl py-3 px-4 text-on-surface font-label focus:ring-2 focus:ring-primary/40 focus:bg-surface-bright transition-all" type="time" value="20:00"/>
 </div>
-<div class="group">
-<label class="font-label text-[10px] uppercase tracking-widest text-on-surface-variant ml-1 mb-1 block">Duration (H)</label>
-<input class="w-full bg-surface-container-highest border-none rounded-xl py-3 px-4 text-on-surface font-label focus:ring-2 focus:ring-primary/40 focus:bg-surface-bright transition-all" type="number" value="16"/>
+<!-- Horizontal Linear Progress Bar -->
+<div class="relative h-4 w-full bg-surface-container-lowest rounded-full overflow-hidden mb-6">
+<div class="absolute top-0 left-0 h-full w-[88%] bg-gradient-to-r from-primary/40 via-primary to-secondary shadow-[0_0_15px_rgba(107,255,143,0.3)]"></div>
+<!-- Metabolic Markers -->
+<div class="absolute top-0 left-[25%] h-full w-px bg-on-background/20"></div>
+<div class="absolute top-0 left-[50%] h-full w-px bg-on-background/20"></div>
+<div class="absolute top-0 left-[75%] h-full w-px bg-on-background/20"></div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+<div class="flex items-center gap-4 p-4 rounded-2xl bg-surface-container-low/50">
+<div class="w-12 h-12 rounded-xl bg-secondary/10 flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">bolt</span>
+</div>
+<div>
+<p class="font-label text-[10px] uppercase text-on-surface-variant tracking-wider">Metabolic State</p>
+<p class="font-headline font-bold text-lg text-secondary">Autophagy</p>
+</div>
+</div>
+<div class="md:col-span-3">
+<p class="text-on-surface-variant leading-relaxed max-w-2xl italic">
+                        "Cellular renewal is currently peaking. Your body is identifying and recycling damaged protein structures to optimize metabolic efficiency."
+                    </p>
+</div>
+</div>
+</section>
+<!-- MIDDLE SECTION: TRAINING (Unified Zone) -->
+<section class="space-y-6">
+<div class="flex items-center justify-between">
+<h3 class="font-headline text-2xl font-extrabold tracking-tight">Unified Training Zone</h3>
+<div class="flex gap-2">
+<span class="px-3 py-1 rounded-full bg-secondary-container/20 text-secondary text-[10px] font-bold uppercase tracking-widest border border-secondary/20">Performance Mode</span>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+<!-- Left Column: Routine Selection -->
+<div class="lg:col-span-4 space-y-4">
+<p class="font-label text-[10px] uppercase text-on-surface-variant tracking-[0.2em] mb-4">Select Routine</p>
+<!-- Routine Card 1 (Active) -->
+<div class="group relative p-5 rounded-2xl bg-surface-container border border-primary/40 shadow-[0_0_20px_rgba(204,151,255,0.1)] cursor-pointer transition-all">
+<div class="flex items-center justify-between mb-3">
+<span class="text-xs font-bold text-primary font-label uppercase">Strength</span>
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<h4 class="font-headline text-xl font-bold mb-1">Pierna Fuerte</h4>
+<p class="text-xs text-on-surface-variant font-body mb-4">Focus: Quadriceps &amp; Stability</p>
+<div class="flex gap-4 text-[10px] font-label text-on-surface/60">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">schedule</span> 45 min</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">fitness_center</span> 12 sets</span>
+</div>
+</div>
+<!-- Routine Card 2 -->
+<div class="group p-5 rounded-2xl bg-surface-container-low border border-outline-variant/10 hover:border-outline-variant/40 cursor-pointer transition-all">
+<div class="flex items-center justify-between mb-3">
+<span class="text-xs font-bold text-on-surface-variant font-label uppercase">Endurance</span>
+</div>
+<h4 class="font-headline text-xl font-bold mb-1 opacity-70 group-hover:opacity-100 transition-opacity">Cardio Alto</h4>
+<p class="text-xs text-on-surface-variant font-body mb-4">Focus: VO2 Max Improvement</p>
+<div class="flex gap-4 text-[10px] font-label text-on-surface/40">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">schedule</span> 30 min</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">heart_broken</span> HIIT</span>
+</div>
+</div>
+<button class="w-full py-4 rounded-2xl border-2 border-dashed border-outline-variant/20 text-on-surface-variant hover:text-on-surface hover:border-outline-variant/50 transition-all font-label text-xs uppercase tracking-widest flex items-center justify-center gap-2">
+<span class="material-symbols-outlined">add</span>
+                        Create Custom Routine
+                    </button>
+</div>
+<!-- Right Column: Active Session HUD -->
+<div class="lg:col-span-8 flex flex-col gap-6">
+<div class="p-8 rounded-3xl glass-panel border border-outline-variant/10 flex-1 relative overflow-hidden">
+<!-- Abstract Background Texture -->
+<div class="absolute -bottom-20 -right-20 w-64 h-64 bg-secondary/5 blur-[100px] rounded-full"></div>
+<div class="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-6">
+<div>
+<h3 class="font-headline text-3xl font-extrabold tracking-tight mb-1">Active Session</h3>
+<div class="flex items-center gap-3">
+<div class="flex items-center gap-2 px-3 py-1 rounded-lg bg-surface-container-highest">
+<span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
+<span class="font-label text-xs text-secondary font-bold">In Progress</span>
+</div>
+<span class="text-on-surface-variant text-sm font-label">Started at 08:30 AM</span>
+</div>
+</div>
+<div class="flex flex-col items-end">
+<span class="font-label text-[10px] uppercase text-on-surface-variant tracking-widest mb-1">Total Duration</span>
+<span class="font-headline text-4xl font-extrabold tracking-tighter text-glow-secondary">00:24:12</span>
+</div>
+</div>
+<!-- Session Controls -->
+<div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-10">
+<button class="py-4 rounded-xl bg-secondary text-on-secondary-fixed font-bold flex items-center justify-center gap-2 active:scale-95 transition-all">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+                                Start
+                            </button>
+<button class="py-4 rounded-xl bg-surface-container-highest border border-outline-variant/30 font-bold flex items-center justify-center gap-2 hover:bg-surface-bright active:scale-95 transition-all">
+<span class="material-symbols-outlined">pause</span>
+                                Pause
+                            </button>
+<button class="py-4 rounded-xl bg-surface-container-highest border border-outline-variant/30 font-bold flex items-center justify-center gap-2 hover:bg-surface-bright active:scale-95 transition-all">
+<span class="material-symbols-outlined">refresh</span>
+                                Reset
+                            </button>
+<button class="py-4 rounded-xl bg-primary/20 border border-primary/30 text-primary font-bold flex items-center justify-center gap-2 hover:bg-primary/30 active:scale-95 transition-all">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">save</span>
+                                Log Workout
+                            </button>
+</div>
+<!-- Session Timeline / Blocks -->
+<div class="space-y-4">
+<p class="font-label text-[10px] uppercase text-on-surface-variant tracking-[0.2em]">Session Blueprint</p>
+<!-- Timeline Item: Done -->
+<div class="relative pl-8 pb-4 border-l border-secondary/40">
+<div class="absolute left-[-5px] top-0 w-2.5 h-2.5 rounded-full bg-secondary shadow-[0_0_8px_rgba(107,255,143,0.8)]"></div>
+<div class="flex items-center justify-between bg-surface-container-low/40 p-4 rounded-xl border border-secondary/10">
+<div class="flex items-center gap-4">
+<span class="font-label text-xs text-secondary">01</span>
+<div>
+<h5 class="font-bold text-sm">Activation / Warm-up</h5>
+<p class="text-[10px] text-on-surface-variant font-label">Mobility &amp; CNS Prep</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-secondary">check_circle</span>
+</div>
+</div>
+<!-- Timeline Item: Active -->
+<div class="relative pl-8 pb-4 border-l border-outline-variant/20">
+<div class="absolute left-[-5px] top-0 w-2.5 h-2.5 rounded-full bg-primary animate-pulse shadow-[0_0_12px_rgba(204,151,255,0.8)]"></div>
+<div class="flex items-center justify-between bg-surface-container p-4 rounded-xl border border-primary/30">
+<div class="flex items-center gap-4">
+<span class="font-label text-xs text-primary">02</span>
+<div>
+<h5 class="font-bold text-sm">Main Block: Hypertrophy</h5>
+<p class="text-[10px] text-on-surface-variant font-label">Barbell Squats | 4 x 10</p>
+</div>
+</div>
+<div class="w-24 h-1.5 bg-surface-container-lowest rounded-full overflow-hidden">
+<div class="h-full w-1/2 bg-primary"></div>
+</div>
+</div>
+</div>
+<!-- Timeline Item: Future -->
+<div class="relative pl-8 border-l border-outline-variant/20">
+<div class="absolute left-[-5px] top-0 w-2.5 h-2.5 rounded-full bg-outline-variant/30"></div>
+<div class="flex items-center justify-between bg-surface-container-low/20 p-4 rounded-xl border border-outline-variant/5 opacity-50">
+<div class="flex items-center gap-4">
+<span class="font-label text-xs">03</span>
+<div>
+<h5 class="font-bold text-sm">Finisher: Accessory</h5>
+<p class="text-[10px] text-on-surface-variant font-label">Leg Press &amp; Calves</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline-variant">lock</span>
+</div>
+</div>
+</div>
 </div>
 </div>
 </div>
 </section>
-<!-- Right Column: Training Section -->
-<section class="space-y-8">
-<div class="flex items-baseline justify-between mb-4">
-<h2 class="font-headline text-3xl font-extrabold tracking-tight text-on-surface">Training HUD</h2>
-<span class="font-label text-primary-fixed-dim text-sm tracking-widest uppercase">Session 4/12</span>
-</div>
-<!-- Routine Selection Cards -->
-<div class="grid grid-cols-4 gap-3">
-<button class="glass-panel p-3 rounded-xl border-primary/40 bg-primary/10 transition-all text-left">
-<span class="font-label text-[8px] uppercase tracking-tighter text-primary-fixed mb-1 block">Strength</span>
-<span class="font-headline text-[10px] font-black leading-tight">PIERNA FUERTE</span>
-</button>
-<button class="glass-panel p-3 rounded-xl hover:bg-surface-bright transition-all text-left group">
-<span class="font-label text-[8px] uppercase tracking-tighter text-on-surface-variant mb-1 block">Endurance</span>
-<span class="font-headline text-[10px] font-black leading-tight text-on-surface group-hover:text-primary">CARDIO ALTO</span>
-</button>
-<button class="glass-panel p-3 rounded-xl hover:bg-surface-bright transition-all text-left group">
-<span class="font-label text-[8px] uppercase tracking-tighter text-on-surface-variant mb-1 block">Mobility</span>
-<span class="font-headline text-[10px] font-black leading-tight text-on-surface group-hover:text-primary">EQUILIBRADO</span>
-</button>
-<button class="glass-panel p-3 rounded-xl hover:bg-surface-bright transition-all text-left group">
-<span class="font-label text-[8px] uppercase tracking-tighter text-on-surface-variant mb-1 block">Skill</span>
-<span class="font-headline text-[10px] font-black leading-tight text-on-surface group-hover:text-primary">TÉCNICA</span>
-</button>
-</div>
-<!-- Action Buttons Cluster -->
-<div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-<button class="bg-secondary text-on-secondary font-bold py-3 px-2 rounded-xl text-xs font-headline flex items-center justify-center gap-1 hover:brightness-110 active:scale-95 transition-all">
-<span class="material-symbols-outlined text-sm">play_arrow</span> Start
-                    </button>
-<button class="bg-surface-container-high text-on-surface font-bold py-3 px-2 rounded-xl text-xs font-headline flex items-center justify-center gap-1 hover:bg-surface-bright active:scale-95 transition-all">
-<span class="material-symbols-outlined text-sm">pause</span> Pause
-                    </button>
-<button class="bg-surface-container-high text-on-surface font-bold py-3 px-2 rounded-xl text-xs font-headline flex items-center justify-center gap-1 hover:bg-surface-bright active:scale-95 transition-all">
-<span class="material-symbols-outlined text-sm">replay</span> Reset
-                    </button>
-<button class="bg-primary/20 text-primary font-bold py-3 px-2 rounded-xl text-xs font-headline flex items-center justify-center gap-1 hover:bg-primary/30 active:scale-95 transition-all border border-primary/20">
-<span class="material-symbols-outlined text-sm">edit_note</span> Log
-                    </button>
-</div>
-<!-- Detailed Exercise Timeline -->
-<div class="glass-panel rounded-[2rem] overflow-hidden">
-<div class="p-6 border-b border-outline-variant/10 flex justify-between items-center bg-surface-container-low">
-<h3 class="font-headline font-bold text-sm">Workout Protocol</h3>
-<span class="font-label text-[10px] text-on-surface-variant">Est. 52 mins</span>
-</div>
-<div class="divide-y divide-outline-variant/5">
-<div class="p-6 flex items-center gap-6 group hover:bg-surface-bright/50 transition-colors">
-<div class="w-12 h-12 rounded-xl overflow-hidden flex-shrink-0">
-<img class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500" data-alt="close-up of metal gym weight plates stacked on a rack in a moody dark fitness center" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCU1Hu7Y4_6-fiiDlLNExv0bVDu10fK0LihXF_SXLqpwWQycgshfwubjSi53TBi5-AJ4J3bx3Sd2Gkjv4ZNNdLHTwFawiCo28uqWOedhXz8LZRh3lO81YO7uywKOZYvsB6zv3tLpp3uoXEkJ8XVqYHmfPzXljDyr4Nl9c6Ji7azeVTADr17qsvuomHhq47BD3CCaigxR2FCpYnaj1-hD3IQ6tD2Z1laSkh0ytM-75tnZQc19SeqhLhYkQFOsA35l8TOkJr4dNWyS0K5"/>
-</div>
-<div class="flex-grow">
-<h4 class="font-headline font-bold text-base text-on-surface">Barbell Back Squats</h4>
-<p class="font-label text-[10px] text-on-surface-variant uppercase tracking-widest mt-1">4 Sets • 8-10 Reps • 75% 1RM</p>
-</div>
-<span class="material-symbols-outlined text-secondary opacity-0 group-hover:opacity-100 transition-opacity" data-weight="fill">check_circle</span>
-</div>
-<div class="p-6 flex items-center gap-6 group hover:bg-surface-bright/50 transition-colors">
-<div class="w-12 h-12 rounded-xl overflow-hidden flex-shrink-0">
-<img class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500" data-alt="fitness athlete performing Bulgarian split squats with dumbbells in a high-end minimalist gym setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCnaKrwj7tPyhCrBeXnTH5wh9hgi97DXRRYvr9wufv2KYskeC2DUWWRwZOl2hgKozwKrBiGznL8RgzWMQLv3KmxSZRT61goG11qGFVF9x6dFL5eMIsmK49cb0YEK8NeJMUJyjl4FM0ZLq-J_4prJgva5PJ3mDtnOYn60RrkN4MKop27DvNOb2P4Xfcg4lu9gXJ0crtNnwrKtqZn-6H62Hp5ZJwsO8835YcFrHeUKDznFMAQbLo90hOj87LSDKvWu-kxSq6o7iRcP_Oi"/>
-</div>
-<div class="flex-grow">
-<h4 class="font-headline font-bold text-base text-on-surface">Bulgarian Split Squats</h4>
-<p class="font-label text-[10px] text-on-surface-variant uppercase tracking-widest mt-1">3 Sets • 12 Reps • RPE 8</p>
-</div>
-<span class="material-symbols-outlined text-on-surface-variant/30">pending</span>
-</div>
-<div class="p-6 flex items-center gap-6 group hover:bg-surface-bright/50 transition-colors">
-<div class="w-12 h-12 rounded-xl overflow-hidden flex-shrink-0">
-<img class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500" data-alt="professional gym equipment leg extension machine in a dark studio with dramatic purple accent lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBMticyhkpV-9iuOIFfI6uzwAh7iuXb8KgbDsUJJ7GHv0VKaf5GMp56e1yHGrK5CL_3g8ow7qz7nJWsU0jIhgPqZSMIkkKvt4jlX-kJzC5p4H1i_4SoszmqP_-amuGMOMTcYLRu8Z9leGUEzr_sUexZ4W2abPeeTh09Zpb73A-ww-eRXFZuJ-6wuBddfs49rGKQb_VJSx-KsWyyo2XQdhymWwJ3YtedrlLd_c_utbxs82p4EP3VfGa-_QwdZajvHekTz_r7km5J60aj"/>
-</div>
-<div class="flex-grow">
-<h4 class="font-headline font-bold text-base text-on-surface">Leg Extensions</h4>
-<p class="font-label text-[10px] text-on-surface-variant uppercase tracking-widest mt-1">3 Sets • 15 Reps • Slow Eccentric</p>
-</div>
-<span class="material-symbols-outlined text-on-surface-variant/30">pending</span>
-</div>
-</div>
-</div>
-</section>
-</div>
 </main>
-<!-- BottomNavBar -->
-<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-8 pb-8 pt-4 bg-neutral-950/80 backdrop-blur-2xl border-t border-white/5 shadow-[0_-10px_40px_rgba(168,85,247,0.1)] rounded-t-3xl">
-<a class="flex flex-col items-center justify-center text-purple-400 bg-purple-500/10 rounded-xl px-6 py-2 shadow-[0_0_20px_rgba(168,85,247,0.2)]" href="#">
-<span class="material-symbols-outlined" data-weight="fill">bolt</span>
+<!-- Bottom Navigation Shell (Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-8 pb-8 pt-4 bg-[#0e0e10]/80 backdrop-blur-xl border-t border-[#48474a]/15 rounded-t-[2rem] shadow-[0_-10px_40px_rgba(0,0,0,0.5)]">
+<a class="flex flex-col items-center justify-center text-[#6bff8f] drop-shadow-[0_0_8px_rgba(107,255,143,0.5)] active:scale-90 duration-200" href="#">
+<span class="material-symbols-outlined">home_max</span>
 <span class="font-['Space_Grotesk'] text-[10px] uppercase tracking-widest mt-1">Home</span>
 </a>
-<a class="flex flex-col items-center justify-center text-neutral-600 px-6 py-2 hover:text-neutral-300 transition-all" href="#">
+<a class="flex flex-col items-center justify-center text-[#f9f5f8]/40 hover:text-[#6bff8f]/80 transition-colors active:scale-90 duration-200" href="#">
 <span class="material-symbols-outlined">insights</span>
 <span class="font-['Space_Grotesk'] text-[10px] uppercase tracking-widest mt-1">Progress</span>
 </a>
