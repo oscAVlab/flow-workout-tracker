@@ -118,7 +118,7 @@
         .btn-iniciar:hover { opacity: 0.9; }
         .btn-reset-w { background: var(--bg-tertiary); color: var(--text-primary); border: 1px solid var(--bg-tertiary); }
         .btn-reset-w:hover { border-color: var(--accent); }
-        .btn-iniciar.done { background: var(--accent); }
+        .btn-iniciar.done { background: #7c3aed; color: #fff; }
         .workout-total { font-size: 9px; color: var(--text-secondary); font-family: 'Courier New', monospace; display: flex; align-items: center; gap: 4px; }
         .workout-total-time { font-size: 13px; font-weight: 700; color: rgba(110,230,89,0.5); }
         .workout-meta { font-size: 8px; color: var(--text-secondary); line-height: 1.5; padding: 0 2px; flex-shrink: 0; }
@@ -800,6 +800,12 @@
         const todayDs = getDateStr(selectedDate);
         const todayData = workoutData[todayDs];
         wstate.done = new Set(todayData && todayData.done ? todayData.done : []);
+        // Restaurar estado del botón si el día ya estaba completado
+        if (todayData && todayData.completed) {
+            const btnW = document.getElementById('btn-start-workout');
+            btnW.textContent = '✓ COMPLETADO';
+            btnW.classList.add('done');
+        }
         updateDate(); renderCal(); renderRoutine(); renderTL(); updateStats();
         renderFastingTicks(); updateFasting(); startFastingTimer(); updateFastingLog();
         if (fastingState.offset > 0) {
@@ -818,3 +824,4 @@
 </script>
 </body>
 </html>
+
