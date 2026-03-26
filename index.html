@@ -3,10 +3,10 @@
 <html class="dark" lang="en"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>KINETIC ETHER | High-Performance Tracker</title>
+<title>Kinetic Ether | Dashboard</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;family=Space+Grotesk:wght@500;700&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <script id="tailwind-config">
         tailwind.config = {
@@ -14,57 +14,57 @@
             theme: {
                 extend: {
                     colors: {
-                        "on-tertiary": "#5e5f60",
-                        "primary-container": "#c284ff",
-                        "on-surface": "#f9f5f8",
-                        "secondary-container": "#006e2f",
-                        "on-secondary-fixed": "#004a1d",
-                        "surface-variant": "#262528",
-                        "on-secondary-container": "#e4ffe2",
-                        "primary-dim": "#9c48ea",
-                        "surface-container-highest": "#262528",
-                        "on-background": "#f9f5f8",
-                        "tertiary-dim": "#ebebec",
-                        "tertiary-fixed-dim": "#eeeeef",
                         "surface-bright": "#2c2c2f",
-                        "surface-tint": "#cc97ff",
-                        "on-error-container": "#ffb2b9",
-                        "surface-container-low": "#131315",
-                        "on-error": "#490013",
-                        "on-primary-container": "#360061",
-                        "inverse-primary": "#842cd3",
-                        "primary-fixed": "#c284ff",
-                        "outline": "#767577",
-                        "secondary-fixed-dim": "#5bf083",
-                        "surface-container-high": "#1f1f22",
-                        "surface-container-lowest": "#000000",
-                        "surface-container": "#19191c",
-                        "background": "#0e0e10",
-                        "primary": "#cc97ff",
-                        "error-dim": "#d73357",
-                        "secondary-fixed": "#6bff8f",
-                        "on-secondary-fixed-variant": "#006a2d",
-                        "inverse-surface": "#fcf8fb",
-                        "error-container": "#a70138",
-                        "on-surface-variant": "#adaaad",
-                        "outline-variant": "#48474a",
-                        "on-primary-fixed-variant": "#430076",
-                        "tertiary-container": "#ebebec",
-                        "on-secondary": "#005f28",
-                        "on-primary": "#47007c",
-                        "tertiary-fixed": "#fcfcfd",
-                        "secondary-dim": "#5bf083",
-                        "on-primary-fixed": "#000000",
-                        "primary-fixed-dim": "#b971ff",
-                        "on-tertiary-container": "#555758",
                         "on-tertiary-fixed-variant": "#6a6b6d",
-                        "error": "#ff6e84",
-                        "inverse-on-surface": "#565457",
+                        "secondary-fixed-dim": "#5bf083",
+                        "on-secondary-fixed-variant": "#006a2d",
+                        "primary": "#cc97ff",
+                        "on-surface-variant": "#adaaad",
+                        "on-error": "#490013",
+                        "primary-container": "#c284ff",
+                        "tertiary-dim": "#ebebec",
+                        "secondary-container": "#006e2f",
+                        "surface-container-high": "#1f1f22",
+                        "on-primary-fixed-variant": "#430076",
+                        "error-dim": "#d73357",
                         "tertiary": "#f9f9fa",
-                        "on-tertiary-fixed": "#4d4f50",
-                        "secondary": "#6bff8f",
+                        "inverse-surface": "#fcf8fb",
+                        "primary-fixed": "#c284ff",
+                        "on-background": "#f9f5f8",
+                        "surface-container": "#19191c",
+                        "inverse-on-surface": "#565457",
                         "surface": "#0e0e10",
-                        "surface-dim": "#0e0e10"
+                        "tertiary-fixed-dim": "#eeeeef",
+                        "surface-container-highest": "#262528",
+                        "surface-container-low": "#131315",
+                        "secondary-fixed": "#6bff8f",
+                        "primary-fixed-dim": "#b971ff",
+                        "on-secondary": "#005f28",
+                        "on-primary-fixed": "#000000",
+                        "on-tertiary-fixed": "#4d4f50",
+                        "on-primary": "#47007c",
+                        "error": "#ff6e84",
+                        "on-error-container": "#ffb2b9",
+                        "outline-variant": "#48474a",
+                        "surface-container-lowest": "#000000",
+                        "on-secondary-fixed": "#004a1d",
+                        "secondary-dim": "#5bf083",
+                        "surface-variant": "#262528",
+                        "on-tertiary": "#5e5f60",
+                        "secondary": "#6bff8f",
+                        "surface-tint": "#cc97ff",
+                        "surface-dim": "#0e0e10",
+                        "on-tertiary-container": "#555758",
+                        "on-surface": "#f9f5f8",
+                        "on-primary-container": "#360061",
+                        "tertiary-fixed": "#fcfcfd",
+                        "background": "#0e0e10",
+                        "outline": "#767577",
+                        "error-container": "#a70138",
+                        "tertiary-container": "#ebebec",
+                        "primary-dim": "#9c48ea",
+                        "on-secondary-container": "#e4ffe2",
+                        "inverse-primary": "#842cd3"
                     },
                     fontFamily: {
                         "headline": ["Manrope"],
@@ -81,239 +81,650 @@
             font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
         }
         .glass-panel {
-            background: rgba(25, 25, 28, 0.6);
+            background: rgba(25, 25, 28, 0.4);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
         }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .neon-glow-primary {
+            box-shadow: 0 0 20px rgba(204, 151, 255, 0.15);
+        }
+        .neon-glow-secondary {
+            box-shadow: 0 0 20px rgba(107, 255, 143, 0.15);
+        }
+        body {
+            background-color: #000000;
+            color: #f9f5f8;
+            font-family: 'Inter', sans-serif;
+        }
+        #progress-view { display: none; }
+        .timer-active { animation: pulse 1s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
+        .calendar-day-active { border: 1px solid #cc97ff !important; background: rgba(204, 151, 255, 0.1) !important; }
+        .calendar-day-today { background: #cc97ff !important; color: #000 !important; }
+        .workout-done::after { content: '✓'; position: absolute; bottom: 2px; right: 2px; font-size: 8px; color: #6bff8f; }
     </style>
 </head>
-<body class="bg-surface text-on-surface font-body selection:bg-primary/30 min-h-screen pb-32">
-<!-- TopAppBar -->
-<header class="fixed top-0 w-full z-50 flex justify-between items-center px-6 h-16 bg-zinc-950/60 backdrop-blur-xl shadow-[0_0_20px_rgba(168,85,247,0.1)]">
-<div class="text-2xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-br from-purple-400 to-purple-700 font-headline">KINETIC ETHER</div>
-<nav class="hidden md:flex gap-8 items-center">
-<a class="font-headline tracking-tight font-bold text-lg text-purple-400 border-b-2 border-purple-500 pb-1" href="#">Dashboard</a>
-<a class="font-headline tracking-tight font-bold text-lg text-zinc-500 hover:text-zinc-300 transition-colors" href="#">Analytics</a>
-<a class="font-headline tracking-tight font-bold text-lg text-zinc-500 hover:text-zinc-300 transition-colors" href="#">Community</a>
+<body class="min-h-screen pb-32">
+<!-- TopNavBar -->
+<header class="fixed top-0 w-full z-50 flex justify-between items-center px-6 py-4 bg-slate-950/60 backdrop-blur-xl shadow-[0_10px_30px_-15px_rgba(168,85,247,0.3)]">
+<div class="text-2xl font-black tracking-tighter text-purple-500 italic">KINETIC ETHER</div>
+<nav class="hidden md:flex items-center gap-8">
+<button class="font-['Manrope'] tracking-tight font-bold uppercase text-sm text-purple-400 border-b-2 border-purple-500 pb-1" id="nav-dashboard">Dashboard</button>
+<button class="font-['Manrope'] tracking-tight font-bold uppercase text-sm text-slate-400 hover:text-slate-200 transition-colors" id="nav-progress">Progress</button>
 </nav>
 <div class="flex items-center gap-4">
-<span class="material-symbols-outlined text-secondary-fixed text-xl cursor-pointer hover:bg-white/5 transition-all duration-300 p-2 rounded-full" id="sync-status">cloud_done</span>
-<span class="material-symbols-outlined text-on-surface-variant text-2xl cursor-pointer hover:bg-white/5 transition-all duration-300 p-2 rounded-full">calendar_today</span>
-<span class="material-symbols-outlined text-on-surface-variant text-2xl cursor-pointer hover:bg-white/5 transition-all duration-300 p-2 rounded-full">account_circle</span>
+<div class="flex items-center gap-2" id="sync-indicator">
+<div class="w-2 h-2 rounded-full bg-slate-600" id="sync-dot"></div>
+<span class="text-[10px] font-label uppercase tracking-widest text-slate-500" id="sync-label">Sync</span>
+</div>
+<button class="material-symbols-outlined text-slate-400 hover:text-purple-400 transition-all active:scale-90" data-icon="account_circle">account_circle</button>
 </div>
 </header>
-<main class="max-w-5xl mx-auto px-4 pt-24 space-y-8">
-<!-- Header Controls: Date & Local Navigation -->
-<section class="flex flex-col gap-6">
-<div class="flex items-center justify-between overflow-x-auto no-scrollbar py-2 gap-4">
-<!-- 7 Day Selector -->
-<div class="flex gap-2 min-w-max">
-<button class="w-12 h-16 flex flex-col items-center justify-center rounded-xl bg-surface-container-high text-on-surface-variant hover:bg-surface-bright transition-colors">
-<span class="text-[10px] font-label uppercase opacity-60">Mon</span>
-<span class="text-lg font-bold">12</span>
-</button>
-<button class="w-12 h-16 flex flex-col items-center justify-center rounded-xl bg-surface-container-high text-on-surface-variant hover:bg-surface-bright transition-colors">
-<span class="text-[10px] font-label uppercase opacity-60">Tue</span>
-<span class="text-lg font-bold">13</span>
-</button>
-<button class="w-12 h-16 flex flex-col items-center justify-center rounded-xl bg-primary/20 border border-primary/30 text-primary shadow-[0_0_15px_rgba(204,151,255,0.2)]">
-<span class="text-[10px] font-label uppercase">Wed</span>
-<span class="text-lg font-bold">14</span>
-</button>
-<button class="w-12 h-16 flex flex-col items-center justify-center rounded-xl bg-surface-container-high text-on-surface-variant hover:bg-surface-bright transition-colors">
-<span class="text-[10px] font-label uppercase opacity-60">Thu</span>
-<span class="text-lg font-bold">15</span>
-</button>
-<button class="w-12 h-16 flex flex-col items-center justify-center rounded-xl bg-surface-container-high text-on-surface-variant hover:bg-surface-bright transition-colors">
-<span class="text-[10px] font-label uppercase opacity-60">Fri</span>
-<span class="text-lg font-bold">16</span>
-</button>
-<button class="w-12 h-16 flex flex-col items-center justify-center rounded-xl bg-surface-container-high text-on-surface-variant hover:bg-surface-bright transition-colors">
-<span class="text-[10px] font-label uppercase opacity-60">Sat</span>
-<span class="text-lg font-bold">17</span>
-</button>
-<button class="w-12 h-16 flex flex-col items-center justify-center rounded-xl bg-surface-container-high text-on-surface-variant hover:bg-surface-bright transition-colors">
-<span class="text-[10px] font-label uppercase opacity-60">Sun</span>
-<span class="text-lg font-bold">18</span>
-</button>
+<div class="h-[1px] w-full fixed top-[72px] z-50 bg-gradient-to-b from-purple-500/10 to-transparent"></div>
+<main class="pt-24 px-4 md:px-8 max-w-7xl mx-auto space-y-8" id="dashboard-view">
+<!-- Calendar Row -->
+<section class="glass-panel rounded-xl p-4 neon-glow-primary">
+<div class="flex justify-between items-center mb-4">
+<div class="flex items-center gap-3">
+<button class="p-2 hover:bg-surface-bright rounded-lg transition-colors" id="btn-prev-day"><span class="material-symbols-outlined text-sm">chevron_left</span></button>
+<h3 class="font-headline font-bold text-sm uppercase tracking-widest" id="current-date-display">January 1, 2024</h3>
+<button class="p-2 hover:bg-surface-bright rounded-lg transition-colors" id="btn-next-day"><span class="material-symbols-outlined text-sm">chevron_right</span></button>
 </div>
-<button class="flex items-center gap-2 px-4 py-2 bg-surface-container rounded-xl text-on-surface-variant font-medium text-sm hover:bg-surface-bright transition-all" id="changeDateBtn">
-<span class="material-symbols-outlined text-sm">event</span>
-                    Custom Range
-                </button>
+<button class="px-4 py-1.5 bg-surface-container-highest hover:bg-surface-bright rounded-lg text-[10px] font-label font-bold uppercase tracking-widest transition-all" id="btn-today">Today</button>
+</div>
+<div class="grid grid-cols-7 gap-2" id="calendar-week">
+<!-- Days injected by JS -->
 </div>
 </section>
-<!-- FASTING PANEL -->
-<section class="glass-panel p-8 rounded-[2rem] border border-outline-variant/10 shadow-2xl">
-<div class="flex flex-col md:flex-row md:items-end justify-between gap-8">
-<div class="space-y-2">
-<h2 class="text-on-surface-variant font-label text-xs uppercase tracking-[0.2em]">Metabolic Phase: Fat Burn</h2>
-<div class="text-7xl md:text-8xl font-label font-bold tracking-tighter text-secondary leading-none" id="fastingTimer">
-                        16:42:08
-                    </div>
+<!-- Fasting Panel (Wide) -->
+<section class="glass-panel rounded-xl p-6 md:p-8 neon-glow-primary overflow-hidden relative">
+<div class="absolute top-0 right-0 p-8 opacity-10 pointer-events-none">
+<span class="material-symbols-outlined text-8xl" data-icon="timer">timer</span>
+</div>
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-6">
+<div>
+<h2 class="font-headline text-3xl font-extrabold tracking-tight text-on-background mb-1" id="fasting-stage-name">Metabolic State</h2>
+<p class="font-body text-on-surface-variant text-sm" id="fasting-stage-desc">Real-time physiological tracking</p>
 </div>
 <div class="flex items-center gap-3">
-<div class="flex flex-col gap-1">
-<label class="text-[10px] font-label uppercase text-on-surface-variant ml-1">Offset (h:m)</label>
-<div class="flex items-center bg-surface-container-highest rounded-xl p-1 gap-1">
-<input class="w-12 bg-transparent border-none text-center font-label font-bold text-primary focus:ring-0 placeholder:text-outline/30" placeholder="00" type="number"/>
-<span class="text-outline/50">:</span>
-<input class="w-12 bg-transparent border-none text-center font-label font-bold text-primary focus:ring-0 placeholder:text-outline/30" placeholder="00" type="number"/>
+<div class="bg-surface-container-highest rounded-lg px-4 py-2 flex items-center gap-4">
+<div class="flex flex-col">
+<span class="font-label text-[10px] uppercase tracking-widest text-on-surface-variant">Offset (H:M)</span>
+<div class="flex items-center gap-1">
+<input class="w-12 bg-transparent border-none p-0 text-xl font-label text-primary focus:ring-0" id="offset-h" type="number" value="0"/>
+<span class="text-on-surface-variant font-label">:</span>
+<input class="w-12 bg-transparent border-none p-0 text-xl font-label text-primary focus:ring-0" id="offset-m" type="number" value="0"/>
 </div>
 </div>
-<button class="w-14 h-14 flex items-center justify-center bg-surface-container-high rounded-full hover:bg-surface-bright transition-transform active:scale-90 border border-outline-variant/20" id="pauseFasting">
-<span class="material-symbols-outlined text-on-surface">pause</span>
-</button>
-<button class="h-14 px-6 bg-gradient-to-br from-primary to-primary-dim rounded-2xl font-bold text-on-primary-fixed shadow-[0_4px_20px_rgba(156,72,234,0.4)] hover:scale-[1.02] active:scale-95 transition-all" id="logFasting">
-                        Log Entry
-                    </button>
+</div>
+<button class="px-4 py-2 bg-primary/20 hover:bg-primary/30 text-primary border border-primary/20 rounded-lg font-label font-bold text-xs uppercase transition-all" id="btn-offset-apply">Apply</button>
 </div>
 </div>
-<!-- Horizontal Linear Progress -->
-<div class="mt-10 space-y-4">
-<div class="relative h-4 bg-surface-container-highest rounded-full overflow-hidden">
-<div class="absolute top-0 left-0 h-full bg-gradient-to-r from-secondary/40 via-secondary to-secondary-fixed shadow-[0_0_15px_rgba(107,255,143,0.3)]" style="width: 72%"></div>
+<div class="text-center mb-12">
+<div class="font-label text-7xl md:text-9xl font-bold tracking-tighter text-on-background drop-shadow-[0_0_30px_rgba(204,151,255,0.2)]" id="fasting-time">
+                    00:00:00
+                </div>
 </div>
-<div class="flex justify-between text-[10px] font-label uppercase tracking-widest text-on-surface-variant/60 px-1">
-<span class="text-secondary-fixed">Fed</span>
-<span>Glycogen</span>
-<span class="font-bold text-on-surface">Fat Burn</span>
-<span>Autophagy</span>
+<!-- Multi-stage Progress Bar -->
+<div class="space-y-4">
+<div class="h-3 w-full bg-surface-container-highest rounded-full overflow-hidden flex">
+<div class="h-full bg-gradient-to-r from-secondary-fixed-dim via-primary to-primary-container transition-all duration-1000" id="fasting-fill" style="width: 0%"></div>
+</div>
+<div class="grid grid-cols-4 text-[10px] font-label uppercase tracking-widest text-center" id="fasting-ticks-labels">
+<div class="text-secondary-fixed">Fed</div>
+<div class="text-primary">Glycogen</div>
+<div class="text-on-surface-variant">Fat Burn</div>
+<div class="text-on-surface-variant">Autophagy</div>
 </div>
 </div>
+<div class="mt-10 flex flex-wrap justify-center gap-4">
+<button class="px-8 py-3 bg-gradient-to-br from-primary to-primary-dim rounded-xl font-headline font-bold text-on-primary-fixed hover:scale-105 active:scale-95 transition-all flex items-center gap-2" id="btn-fasting-start">
+<span class="material-symbols-outlined" data-icon="play_arrow">play_arrow</span> Start Session
+                </button>
+<button class="px-8 py-3 bg-surface-container-highest rounded-xl font-headline font-bold text-on-background hover:bg-surface-bright active:scale-95 transition-all flex items-center gap-2" id="btn-fasting-close">
+<span class="material-symbols-outlined" data-icon="check_circle">check_circle</span> End &amp; Log
+                </button>
+<button class="px-6 py-3 border border-outline-variant/30 rounded-xl font-headline font-semibold text-on-surface-variant hover:text-on-background transition-all" id="btn-fasting-reset">
+                    Reset
+                </button>
+</div>
+<div class="mt-6 text-center text-xs font-label text-secondary uppercase tracking-widest opacity-80" id="fasting-log"></div>
 </section>
-<!-- TRAINING ZONE -->
-<section class="space-y-6">
-<div class="flex items-center justify-between">
-<h2 class="text-2xl font-headline font-extrabold tracking-tight">TRAINING ZONE</h2>
-<div class="font-label text-2xl text-secondary bg-secondary/10 px-4 py-1 rounded-lg border border-secondary/20" id="sessionTimer">00:45:12</div>
-</div>
-<!-- Routine Selectors -->
-<div class="grid grid-cols-4 gap-3">
-<button class="py-4 bg-primary/20 border border-primary/40 rounded-2xl text-primary font-label font-bold text-sm tracking-widest shadow-[0_0_20px_rgba(204,151,255,0.15)]">DAY 1</button>
-<button class="py-4 bg-surface-container-high border border-outline-variant/10 rounded-2xl text-on-surface-variant font-label font-bold text-sm tracking-widest hover:bg-surface-bright transition-all">DAY 2</button>
-<button class="py-4 bg-surface-container-high border border-outline-variant/10 rounded-2xl text-on-surface-variant font-label font-bold text-sm tracking-widest hover:bg-surface-bright transition-all">DAY 3</button>
-<button class="py-4 bg-surface-container-high border border-outline-variant/10 rounded-2xl text-on-surface-variant font-label font-bold text-sm tracking-widest hover:bg-surface-bright transition-all">DAY 4</button>
-</div>
-<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-<!-- Session Blueprint (Vertical Timeline) -->
-<div class="lg:col-span-2 space-y-4">
-<div class="bg-surface-container rounded-[2rem] p-6 border border-outline-variant/5">
-<h3 class="font-label text-xs uppercase tracking-[0.2em] text-on-surface-variant mb-6 flex items-center gap-2">
-<span class="w-1.5 h-1.5 bg-primary rounded-full"></span> Session Blueprint
-                        </h3>
-<div class="space-y-4 relative">
-<!-- Timeline Line -->
-<div class="absolute left-3 top-0 bottom-0 w-[1px] bg-outline-variant/20"></div>
-<!-- Timeline Items -->
-<div class="relative flex items-center gap-6 pl-10 group">
-<div class="absolute left-[9px] w-[7px] h-[7px] bg-primary rounded-full ring-4 ring-primary/10"></div>
-<div class="flex-1 bg-surface-container-high p-4 rounded-2xl border-l-4 border-primary/40 group-hover:bg-surface-bright transition-colors">
-<div class="flex justify-between items-center">
-<span class="font-bold">ACTIVATION</span>
-<span class="font-label text-xs opacity-60">5M</span>
-</div>
-<p class="text-sm text-on-surface-variant mt-1 italic">Calentamiento dinámico articular</p>
+<!-- Training Zone (Wide) -->
+<section class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+<!-- Left: Routine Controls -->
+<div class="lg:col-span-1 glass-panel rounded-xl p-6 flex flex-col justify-between">
+<div>
+<h3 class="font-headline text-xl font-bold mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary" data-icon="fitness_center">fitness_center</span>
+                        Training Zone
+                    </h3>
+<div class="space-y-4 mb-8">
+<p class="font-label text-[10px] uppercase tracking-widest text-on-surface-variant">Select Strategy</p>
+<div class="grid grid-cols-2 gap-3" id="routine-selector">
+<!-- Injected by JS: routine buttons -->
 </div>
 </div>
-<div class="relative flex items-center gap-6 pl-10 group">
-<div class="absolute left-2.5 w-2 h-2 bg-secondary rounded-full ring-4 ring-secondary/10"></div>
-<div class="flex-1 bg-surface-container-high p-4 rounded-2xl border-l-4 border-secondary/40">
-<div class="flex justify-between items-center">
-<span class="font-bold">CICLO 1 QUEMA</span>
-<span class="font-label text-xs opacity-60">7M</span>
-</div>
-<p class="text-sm text-on-surface-variant mt-1">Salto con sentadilla intenso • Burpees con salto</p>
-</div>
-</div>
-<div class="relative flex items-center gap-6 pl-10 group opacity-60">
-<div class="absolute left-3 w-1.5 h-1.5 bg-outline rounded-full"></div>
-<div class="flex-1 bg-surface-container-low p-4 rounded-2xl">
-<div class="flex justify-between items-center">
-<span class="font-bold">CICLO 1 FUERZA</span>
-<span class="font-label text-xs">3M</span>
-</div>
-<p class="text-sm text-on-surface-variant mt-1">Flexión de brazos lenta • Sentadilla isométrica</p>
+<div class="space-y-3">
+<button class="w-full py-4 bg-secondary-container/20 text-secondary-fixed border border-secondary/20 rounded-xl font-headline font-bold flex items-center justify-center gap-3 hover:bg-secondary-container/30 transition-all" id="btn-start-workout">
+<span class="material-symbols-outlined" data-icon="not_started">not_started</span> Start Workout
+                        </button>
+<button class="w-full py-3 bg-surface-container-highest text-on-background rounded-xl font-headline font-bold flex items-center justify-center gap-3 active:scale-95 transition-all" id="btn-reset-workout">
+<span class="material-symbols-outlined" data-icon="history">history</span> Reset Session
+                        </button>
 </div>
 </div>
-<div class="relative flex items-center gap-6 pl-10 group opacity-40">
-<div class="absolute left-3 w-1.5 h-1.5 bg-outline rounded-full"></div>
-<div class="flex-1 bg-surface-container-low p-4 rounded-2xl">
-<div class="flex justify-between items-center">
-<span class="font-bold">CICLO 2 QUEMA</span>
-<span class="font-label text-xs">7M</span>
+<div class="mt-8 pt-6 border-t border-outline-variant/10">
+<div class="flex justify-between items-center text-sm">
+<span class="text-on-surface-variant">Session Elapsed</span>
+<span class="font-label font-bold text-secondary" id="workout-total-time">00:00</span>
 </div>
-<p class="text-sm text-on-surface-variant mt-1">Zancada con salto • Escalador veloz</p>
+<div class="mt-4 text-[10px] text-on-surface-variant font-body leading-relaxed" id="workout-meta"></div>
 </div>
 </div>
-<div class="relative flex items-center gap-6 pl-10 group opacity-40">
-<div class="absolute left-3 w-1.5 h-1.5 bg-outline rounded-full"></div>
-<div class="flex-1 bg-surface-container-low p-4 rounded-2xl">
-<div class="flex justify-between items-center">
-<span class="font-bold">COOL-DOWN</span>
-<span class="font-label text-xs">10M</span>
+<!-- Right: Session Blueprint -->
+<div class="lg:col-span-2 glass-panel rounded-xl p-6 md:p-8 flex flex-col min-h-[500px]">
+<div class="flex justify-between items-center mb-8">
+<h3 class="font-headline text-xl font-bold italic tracking-tight">SESSION BLUEPRINT</h3>
+<div class="px-3 py-1 bg-surface-bright rounded-full text-[10px] font-label font-bold uppercase tracking-widest text-on-surface-variant">
+                        Target Time: 65m
+                    </div>
 </div>
-<p class="text-sm text-on-surface-variant mt-1">Estiramiento estático guiado</p>
-</div>
-</div>
-</div>
-</div>
-</div>
-<!-- Session Controls -->
-<div class="flex flex-col gap-4">
-<button class="group relative flex items-center justify-between w-full h-24 bg-gradient-to-br from-secondary to-secondary-dim p-6 rounded-3xl overflow-hidden shadow-[0_10px_30px_rgba(107,255,143,0.2)] hover:scale-[1.02] active:scale-95 transition-all" id="startWorkout">
-<div class="z-10 text-left">
-<span class="block text-[10px] font-label uppercase tracking-widest text-on-secondary-fixed opacity-70">Action</span>
-<span class="text-2xl font-black text-on-secondary-fixed font-headline">START WORKOUT</span>
-</div>
-<span class="material-symbols-outlined text-4xl text-on-secondary-fixed z-10 group-hover:rotate-12 transition-transform">play_arrow</span>
-</button>
-<div class="grid grid-cols-2 gap-4">
-<button class="flex flex-col items-center justify-center h-28 bg-surface-container-high rounded-3xl border border-outline-variant/10 hover:bg-surface-bright transition-all" id="pauseWorkout">
-<span class="material-symbols-outlined text-3xl mb-2">pause</span>
-<span class="font-label text-[10px] uppercase tracking-widest">Pause</span>
-</button>
-<button class="flex flex-col items-center justify-center h-28 bg-surface-container-high rounded-3xl border border-outline-variant/10 hover:bg-surface-bright transition-all" id="resetWorkout">
-<span class="material-symbols-outlined text-3xl mb-2">refresh</span>
-<span class="font-label text-[10px] uppercase tracking-widest">Reset</span>
-</button>
-</div>
-<button class="w-full h-16 bg-surface-bright border border-primary/20 rounded-2xl font-bold text-primary flex items-center justify-center gap-2 hover:bg-primary/5 transition-all" id="logWorkout">
-<span class="material-symbols-outlined">edit_note</span>
-                        LOG WORKOUT
-                    </button>
-<!-- Decoration Image -->
-<div class="mt-4 h-full min-h-[200px] rounded-[2rem] overflow-hidden relative">
-<img class="absolute inset-0 w-full h-full object-cover grayscale opacity-40" data-alt="Close-up of high-performance athletic gear on dark surface with sharp dramatic purple and green neon lighting accents" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAzwBMgt9-5-RcHsZklbsDhUCSlCrZUIGKS1c65ztV980xo7ODOinGDlQBbhVaVPiaDw5ov_hPBcYqRktmfCtxrlMY4ttABvd--otXPRNRKQE9I7IyI1tpD1iFfDmM3gDD7vGTpzZX7S3LC0rfedXhA_LMIXy1yoUHQm37tsJ1tzbqAnRbxuiDdmpmZeLKRx4sDziQjrwFOHJTs84RhxS1c-SRYwDfYMH4Ha3CtnCQ_wFCXb59EdFlAbTDA33KRq6x5e-DtytF6vvBl"/>
-<div class="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent"></div>
-</div>
+<div class="relative pl-8 space-y-10 flex-1 overflow-y-auto pr-2 custom-scrollbar" id="timeline-container">
+<!-- Dynamic blocks injected by JS -->
 </div>
 </div>
 </section>
 </main>
-<!-- BottomNavBar -->
-<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-6 pt-2 bg-black/80 backdrop-blur-2xl border-t border-white/5 shadow-[0_-10px_40px_rgba(0,0,0,0.8)] rounded-t-3xl md:hidden">
-<a class="flex flex-col items-center justify-center text-zinc-600 px-4 py-2 hover:text-emerald-300 transition-all" href="#">
-<span class="material-symbols-outlined mb-1">center_focus_strong</span>
-<span class="font-['Space_Grotesk'] text-[10px] uppercase tracking-widest">Focus</span>
-</a>
-<a class="flex flex-col items-center justify-center text-zinc-600 px-4 py-2 hover:text-emerald-300 transition-all" href="#">
-<span class="material-symbols-outlined mb-1">bolt</span>
-<span class="font-['Space_Grotesk'] text-[10px] uppercase tracking-widest">Vitality</span>
-</a>
-<a class="flex flex-col items-center justify-center bg-emerald-500/10 text-emerald-400 rounded-xl px-4 py-2 shadow-[0_0_15px_rgba(107,255,143,0.2)]" href="#">
-<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 1;">timer</span>
-<span class="font-['Space_Grotesk'] text-[10px] uppercase tracking-widest">Fuel</span>
-</a>
-<a class="flex flex-col items-center justify-center text-zinc-600 px-4 py-2 hover:text-emerald-300 transition-all" href="#">
-<span class="material-symbols-outlined mb-1">groups</span>
-<span class="font-['Space_Grotesk'] text-[10px] uppercase tracking-widest">Social</span>
-</a>
-<a class="flex flex-col items-center justify-center text-zinc-600 px-4 py-2 hover:text-emerald-300 transition-all" href="#">
-<span class="material-symbols-outlined mb-1">person</span>
-<span class="font-['Space_Grotesk'] text-[10px] uppercase tracking-widest">Profile</span>
-</a>
-</nav>
+<main class="pt-24 px-4 md:px-8 max-w-7xl mx-auto space-y-8" id="progress-view">
+<section class="glass-panel rounded-xl p-8 neon-glow-secondary">
+<h2 class="font-headline text-3xl font-extrabold tracking-tight text-on-background mb-8">Analytics &amp; Progress</h2>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+<div class="bg-surface-container-low p-6 rounded-2xl border border-outline-variant/10">
+<span class="font-label text-[10px] uppercase tracking-widest text-on-surface-variant">Consistency Streak</span>
+<div class="text-4xl font-headline font-black text-secondary mt-2" id="stat-streak">0</div>
+</div>
+<div class="bg-surface-container-low p-6 rounded-2xl border border-outline-variant/10">
+<span class="font-label text-[10px] uppercase tracking-widest text-on-surface-variant">Total Sessions</span>
+<div class="text-4xl font-headline font-black text-primary mt-2" id="stat-total">0</div>
+</div>
+<div class="bg-surface-container-low p-6 rounded-2xl border border-outline-variant/10">
+<span class="font-label text-[10px] uppercase tracking-widest text-on-surface-variant">Week Completion</span>
+<div class="text-4xl font-headline font-black text-on-background mt-2" id="stat-week">0</div>
+</div>
+<div class="bg-surface-container-low p-6 rounded-2xl border border-outline-variant/10">
+<span class="font-label text-[10px] uppercase tracking-widest text-on-surface-variant">Today's Focus</span>
+<div class="text-4xl font-headline font-black text-secondary-fixed mt-2" id="stat-today">—</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Map Background Decoration (Subtle) -->
+<div class="fixed inset-0 -z-10 opacity-[0.03] grayscale invert pointer-events-none overflow-hidden">
+<img alt="map background" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAFqDyRoKtmXKfwP_1ebTsgTzFDGd8fi0Nt9AwW8SOmFfE2aEsbbOHd8UrzehUjAP2lWyDFaDgJh2fAHtdjz7nixc28V3VqL_OKW1AVouSeX79SDWzu_0PM-RrcScm1lAz2VnsiDwhqo0x9x-qiT8zgpXkSEQ6XGeitk15yZL22T_keD4JmWwNrrhKJxXNGi-Y5yQKds_Rs_nRoanmlIurqkSKs9bIHTX645tZj-QJnaKNdyd0QE3Ou1pMuHqlXeZ1SBL6VVfxlXilp"/>
+</div>
+<script>
+        const SUPABASE_URL = 'https://tbhrpphmscndekpnnerl.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRiaHJwcGhtc2NuZGVrcG5uZXJsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM3ODI4NjcsImV4cCI6MjA4OTM1ODg2N30.6KH1xDoqg_CLM5K4P1f_YVEUi111s5Z4Xtn90fF0FFU';
+        const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        // Constants from Original Data
+        const FASTING_MAX_H = 24;
+        const fastingStages = [
+            { name: 'Fed', hours: 0, desc: 'Digesting • High insulin • Glucose energy' },
+            { name: 'Early Fast', hours: 4, desc: 'Low insulin • Using liver glycogen' },
+            { name: 'Metabolic Shift', hours: 12, desc: 'Glycogen depleted • Fat burn starts' },
+            { name: 'Fat Burning', hours: 16, desc: 'Keto mode • Mental clarity • Fat fuel' },
+            { name: 'Autophagy', hours: 24, desc: 'Cellular recycling • Growth hormone spike' },
+        ];
+
+        const routineData = {
+            1: { name: "Leg Power", color: "text-primary", blocks: [
+                { id: "w", title: "Activation", duration: 300, type: "warmup", exercises: "Dumbbell Punches 1kg • High Knees • Mobility" },
+                { id: "c1q", title: "Burn - Cycle 1", duration: 420, type: "cardio", exercises: "Jump Squats • Squat + Punch • Lateral Lunges" },
+                { id: "c1f", title: "Strength - Cycle 1", duration: 180, type: "strength", exercises: "Goblet Squat + Press 5kg" },
+                { id: "c2q", title: "Burn - Cycle 2", duration: 420, type: "cardio", exercises: "Walking Lunges • Hip Thrust • DL Jump" },
+                { id: "c2f", title: "Strength - Cycle 2", duration: 180, type: "strength", exercises: "Romanian DL + Row 5kg" },
+                { id: "c3q", title: "Burn - Cycle 3", duration: 420, type: "cardio", exercises: "Burpees • Squat + Punch • Mountain Climbers" },
+                { id: "c3f", title: "Strength - Cycle 3", duration: 180, type: "strength", exercises: "Deep Lunge + Row 5kg" },
+                { id: "c4q", title: "Burn - Cycle 4", duration: 420, type: "cardio", exercises: "Fast Squats • Punch + High Knee • Lateral Lunge" },
+                { id: "c4f", title: "Strength - Cycle 4", duration: 180, type: "strength", exercises: "Clean + Squat + Press 5kg" },
+                { id: "c5q", title: "Sprint Final", duration: 300, type: "cardio", exercises: "Jump Squat • Max Punch Speed • High Knees" },
+                { id: "c5f", title: "Strength Final", duration: 300, type: "strength", exercises: "Squat + Press • Lunge + Remo • Deadlift 5kg" },
+                { id: "cd", title: "Cool-down", duration: 600, type: "cooldown", exercises: "Walk • Deep Stretching • Breathwork" }
+            ]},
+            2: { name: "High Cardio", color: "text-secondary", blocks: [
+                { id: "w", title: "Activation", duration: 300, type: "warmup", exercises: "Fast Punches 1kg • High Knees • Arm Mobility" },
+                { id: "c1q", title: "Burn - Cycle 1", duration: 420, type: "cardio", exercises: "Punch Combo 1kg • Squat + Overhead Punch" },
+                { id: "c1f", title: "Strength - Cycle 1", duration: 180, type: "strength", exercises: "Press + Squat 5kg" },
+                { id: "c2q", title: "Burn - Cycle 2", duration: 420, type: "cardio", exercises: "Lat Lunge + Raise • Side-to-Side • Side Punch" },
+                { id: "c2f", title: "Strength - Cycle 2", duration: 180, type: "strength", exercises: "Deep Lat Lunge + Unilateral Press 5kg" },
+                { id: "c3q", title: "Burn - Cycle 3", duration: 420, type: "cardio", exercises: "Squat + Punch • Lunge + Punch • Speed Burpees" },
+                { id: "c3f", title: "Strength - Cycle 3", duration: 180, type: "strength", exercises: "Clean + Squat + Press 5kg" },
+                { id: "c4q", title: "HIIT Peak", duration: 420, type: "cardio", exercises: "Jump Squat • Max Burpees • Max Mountain Climbers" },
+                { id: "c4f", title: "Strength - Cycle 4", duration: 180, type: "strength", exercises: "Deadlift + Row + Punch 5kg" },
+                { id: "c5q", title: "Sprint Final", duration: 300, type: "cardio", exercises: "Burpees • Max Speed Punch • Jump Squat" },
+                { id: "c5f", title: "Strength Final", duration: 300, type: "strength", exercises: "Squat + Press • Clean + Press • Deadlift 5kg" },
+                { id: "cd", title: "Cool-down", duration: 600, type: "cooldown", exercises: "Walk • Chest/Shoulder Stretch • Breathwork" }
+            ]},
+            3: { name: "Balanced", color: "text-purple-400", blocks: [
+                { id: "w", title: "Activation", duration: 300, type: "warmup", exercises: "Dumbbell Punches • High Knees • Full Body Mobility" },
+                { id: "c1q", title: "Burn - Cycle 1", duration: 420, type: "cardio", exercises: "Push + Squat • Lateral Raises • Punches" },
+                { id: "c1f", title: "Strength - Cycle 1", duration: 180, type: "strength", exercises: "Goblet Squat + Press 5kg" },
+                { id: "c2q", title: "Burn - Cycle 2", duration: 420, type: "cardio", exercises: "Row + Lunge • Lat Lunge + Raise • Speed Punch" },
+                { id: "c2f", title: "Strength - Cycle 2", duration: 180, type: "strength", exercises: "Deep Lunge + Row 5kg" },
+                { id: "c3q", title: "Burn - Cycle 3", duration: 420, type: "cardio", exercises: "Hip Thrust • DL + Punch • Reverse Lunge" },
+                { id: "c3f", title: "Strength - Cycle 3", duration: 180, type: "strength", exercises: "Romanian DL + Row 5kg" },
+                { id: "c4q", title: "Burn - Cycle 4", duration: 420, type: "cardio", exercises: "Plank Punches • Dead Bug • Pallof Press" },
+                { id: "c4f", title: "Strength - Cycle 4", duration: 180, type: "strength", exercises: "Pallof + Lunge 5kg" },
+                { id: "c5q", title: "Sprint Final", duration: 300, type: "cardio", exercises: "Fast Squats • Speed Punches • Walking Lunges" },
+                { id: "c5f", title: "Strength Final", duration: 300, type: "strength", exercises: "Goblet Squat • Row • Weak Point Focus" },
+                { id: "cd", title: "Cool-down", duration: 600, type: "cooldown", exercises: "Walk • Stretching • Breathwork" }
+            ]},
+            4: { name: "Technique", color: "text-on-surface-variant", blocks: [
+                { id: "w", title: "Activation", duration: 300, type: "warmup", exercises: "Form Focus Punches • Slow Rodillas • Mobility" },
+                { id: "c1q", title: "Burn - Cycle 1", duration: 420, type: "cardio", exercises: "Tempo Squats • Controlled Lat Lunge" },
+                { id: "c1f", title: "Strength - Cycle 1", duration: 180, type: "strength", exercises: "Ultra Slow Goblet (5s down) 5kg" },
+                { id: "c2q", title: "Burn - Cycle 2", duration: 420, type: "cardio", exercises: "Controlled DL • Slow Hip Thrust" },
+                { id: "c2f", title: "Strength - Cycle 2", duration: 180, type: "strength", exercises: "Tempo Deadlift (4s down) 5kg" },
+                { id: "c3q", title: "Burn - Cycle 3", duration: 420, type: "cardio", exercises: "Form Press • Slow Lat Raise" },
+                { id: "c3f", title: "Strength - Cycle 3", duration: 180, type: "strength", exercises: "Strict Overhead Press 5kg" },
+                { id: "c4q", title: "Burn - Cycle 4", duration: 420, type: "cardio", exercises: "Slow Row • Isometric Plank • Slow Pulldown" },
+                { id: "c4f", title: "Strength - Cycle 4", duration: 180, type: "strength", exercises: "Row with 2s Squeeze 5kg" },
+                { id: "c5q", title: "Sprint Final", duration: 300, type: "cardio", exercises: "Form Squats • Form Punches • Controlled Lunge" },
+                { id: "c5f", title: "Strength Final", duration: 300, type: "strength", exercises: "Control Goblet • Control Row • Form Repair" },
+                { id: "cd", title: "Cool-down", duration: 600, type: "cooldown", exercises: "Walk • Deep Stretching • Meditation" }
+            ]}
+        };
+
+        // State Management
+        let currentRoutine = 1;
+        let selectedDate = new Date();
+        let workoutData = {};
+        let fastingState = { seconds: 0, offset: 0, started: false, startedAt: null };
+        let wstate = { started: false, done: new Set() };
+        let wint = {};
+        let totalSeconds = 0;
+        let totalInterval = null;
+        let fastingInterval = null;
+        let saveTimeout = null;
+
+        // --- Supabase Logic ---
+        async function loadFromSupabase() {
+            setSyncStatus('syncing', 'Loading');
+            try {
+                const { data, error } = await sb.from('flow_data').select('*').eq('id', 1);
+                if (error) throw error;
+                if (!data || data.length === 0) {
+                    await sb.from('flow_data').insert({ id: 1, workout_data: {}, fasting_state: {} });
+                    setSyncStatus('ok', 'Synced');
+                    return;
+                }
+                const row = data[0];
+                if (row.workout_data) workoutData = row.workout_data;
+                if (row.fasting_state && Object.keys(row.fasting_state).length > 0) {
+                    const fs = row.fasting_state;
+                    fastingState.seconds = fs.seconds || 0;
+                    fastingState.offset = fs.offset || 0;
+                    fastingState.started = fs.started || false;
+                    fastingState.startedAt = fs.startedAt || null;
+                    if (fastingState.started && fastingState.startedAt) {
+                        const elapsed = Math.floor((Date.now() - new Date(fastingState.startedAt).getTime()) / 1000);
+                        fastingState.seconds += elapsed;
+                        fastingState.startedAt = new Date().toISOString();
+                    }
+                }
+                setSyncStatus('ok', 'Ready');
+            } catch (e) {
+                console.error('Load error:', e);
+                setSyncStatus('error', 'Offline');
+            }
+        }
+
+        async function saveToSupabase() {
+            setSyncStatus('syncing', 'Saving');
+            try {
+                const { error } = await sb.from('flow_data').upsert({
+                    id: 1,
+                    workout_data: workoutData,
+                    fasting_state: {
+                        seconds: fastingState.seconds,
+                        offset: fastingState.offset,
+                        started: fastingState.started,
+                        startedAt: fastingState.startedAt
+                    },
+                    updated_at: new Date().toISOString()
+                });
+                if (error) throw error;
+                setSyncStatus('ok', 'Saved');
+            } catch (e) {
+                console.error('Save error:', e);
+                setSyncStatus('error', 'Error');
+            }
+        }
+
+        function debouncedSave() {
+            clearTimeout(saveTimeout);
+            saveTimeout = setTimeout(saveToSupabase, 1500);
+        }
+
+        function setSyncStatus(status, label) {
+            const dot = document.getElementById('sync-dot');
+            const lbl = document.getElementById('sync-label');
+            if (status === 'syncing') dot.className = 'w-2 h-2 rounded-full bg-primary animate-pulse';
+            else if (status === 'ok') dot.className = 'w-2 h-2 rounded-full bg-secondary';
+            else if (status === 'error') dot.className = 'w-2 h-2 rounded-full bg-error';
+            lbl.textContent = label;
+        }
+
+        // --- Fasting Logic ---
+        function updateFasting() {
+            const total = fastingState.seconds + (fastingState.offset * 3600);
+            const h = Math.floor(total / 3600);
+            const m = Math.floor((total % 3600) / 60);
+            const s = total % 60;
+            document.getElementById('fasting-time').textContent = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+
+            let currentStage = fastingStages[0];
+            for (let i = 0; i < fastingStages.length; i++) {
+                if (h >= fastingStages[i].hours) currentStage = fastingStages[i];
+            }
+            document.getElementById('fasting-stage-name').textContent = currentStage.name;
+            document.getElementById('fasting-stage-desc').textContent = currentStage.desc;
+
+            const pct = Math.min((h / FASTING_MAX_H) * 100, 100);
+            document.getElementById('fasting-fill').style.width = pct + '%';
+        }
+
+        function startFastingTimer() {
+            if (fastingInterval) clearInterval(fastingInterval);
+            fastingInterval = setInterval(() => {
+                if (fastingState.started) { fastingState.seconds++; updateFasting(); }
+            }, 1000);
+        }
+
+        document.getElementById('btn-fasting-start').onclick = () => {
+            fastingState.started = !fastingState.started;
+            const btn = document.getElementById('btn-fasting-start');
+            btn.innerHTML = fastingState.started ? '<span class="material-symbols-outlined">pause</span> Pause Session' : '<span class="material-symbols-outlined">play_arrow</span> Start Session';
+            if (fastingState.started) fastingState.startedAt = new Date().toISOString();
+            debouncedSave();
+        };
+
+        document.getElementById('btn-fasting-close').onclick = () => {
+            const total = fastingState.seconds + (fastingState.offset * 3600);
+            if (total < 60) return;
+            fastingState.started = false;
+            document.getElementById('btn-fasting-start').innerHTML = '<span class="material-symbols-outlined">play_arrow</span> Start Session';
+            const ds = getDateStr(new Date());
+            const now = new Date();
+            const closedAt = now.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+            if (!workoutData[ds]) workoutData[ds] = {};
+            workoutData[ds].fasting = { totalSeconds: Math.floor(total), closedAt: closedAt, date: ds };
+            updateFastingLog();
+            debouncedSave();
+        };
+
+        document.getElementById('btn-fasting-reset').onclick = () => {
+            fastingState = { seconds: 0, offset: 0, started: false, startedAt: null };
+            document.getElementById('btn-fasting-start').innerHTML = '<span class="material-symbols-outlined">play_arrow</span> Start Session';
+            document.getElementById('offset-h').value = 0;
+            document.getElementById('offset-m').value = 0;
+            updateFasting();
+            debouncedSave();
+        };
+
+        document.getElementById('btn-offset-apply').onclick = () => {
+            const oh = parseInt(document.getElementById('offset-h').value) || 0;
+            const om = parseInt(document.getElementById('offset-m').value) || 0;
+            fastingState.offset = oh + (om / 60);
+            updateFasting();
+            debouncedSave();
+        };
+
+        function updateFastingLog() {
+            const logEl = document.getElementById('fasting-log');
+            const ds = getDateStr(new Date());
+            const dayData = workoutData[ds];
+            if (dayData && dayData.fasting) {
+                const f = dayData.fasting;
+                const h = Math.floor(f.totalSeconds / 3600);
+                const m = Math.floor((f.totalSeconds % 3600) / 60);
+                logEl.textContent = `Completed: ${String(h).padStart(2,'0')}h ${String(m).padStart(2,'0')}m • ${f.closedAt}`;
+            } else {
+                logEl.textContent = '';
+            }
+        }
+
+        // --- Calendar & Nav ---
+        function getDateStr(d) {
+            return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+        }
+
+        function renderCal() {
+            const c = document.getElementById('calendar-week');
+            c.innerHTML = '';
+            const today = new Date();
+            const selStr = getDateStr(selectedDate);
+            for (let i = 6; i >= 0; i--) {
+                const d = new Date(today.getFullYear(), today.getMonth(), today.getDate() - i);
+                const ds = getDateStr(d);
+                const btn = document.createElement('button');
+                btn.className = `relative flex flex-col items-center justify-center p-3 rounded-xl transition-all border border-outline-variant/10 ${ds === selStr ? 'calendar-day-active' : 'bg-surface-container-low hover:bg-surface-bright'}`;
+                if (ds === getDateStr(today)) btn.classList.add('calendar-day-today');
+                btn.innerHTML = `<span class="text-[10px] font-label font-bold uppercase opacity-60">${d.toLocaleDateString('en-US', {weekday: 'short'})}</span><span class="text-lg font-headline font-black">${d.getDate()}</span>`;
+                const dd = workoutData[ds];
+                if (dd && dd.completed) btn.classList.add('workout-done');
+                btn.onclick = () => { changeDate(new Date(d)); };
+                c.appendChild(btn);
+            }
+        }
+
+        function changeDate(newDate) {
+            selectedDate = newDate;
+            wstate.started = false;
+            stopSeq();
+            clearInterval(totalInterval);
+            totalSeconds = 0;
+            updateTotalTimer();
+            document.getElementById('btn-start-workout').innerHTML = '<span class="material-symbols-outlined">not_started</span> Start Workout';
+            const ds = getDateStr(selectedDate);
+            const dayData = workoutData[ds];
+            wstate.done = new Set(dayData && dayData.done ? dayData.done : []);
+            updateUI();
+        }
+
+        function updateUI() {
+            document.getElementById('current-date-display').textContent = selectedDate.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+            renderCal();
+            updateStats();
+            renderTL();
+        }
+
+        // --- Workout Logic ---
+        function renderRoutineBtns() {
+            const container = document.getElementById('routine-selector');
+            container.innerHTML = '';
+            Object.keys(routineData).forEach(id => {
+                const rid = parseInt(id);
+                const btn = document.createElement('button');
+                btn.className = `p-4 rounded-xl font-bold text-sm transition-all ${rid === currentRoutine ? 'bg-primary-container text-on-primary-container shadow-[0_0_15px_rgba(204,151,255,0.2)]' : 'bg-surface-container-highest text-on-surface-variant hover:bg-surface-bright'}`;
+                btn.textContent = `Op. ${id}`;
+                btn.onclick = () => { currentRoutine = rid; renderRoutineBtns(); reset(); renderTL(); };
+                container.appendChild(btn);
+            });
+        }
+
+        function renderTL() {
+            const container = document.getElementById('timeline-container');
+            container.innerHTML = `<div class="absolute left-[7px] top-2 bottom-2 w-[2px] bg-gradient-to-b from-primary via-secondary to-surface-variant rounded-full"></div>`;
+            routineData[currentRoutine].blocks.forEach((b, i) => {
+                const isDone = wstate.done.has(b.id);
+                const block = document.createElement('div');
+                block.className = `relative group ${isDone ? 'opacity-50' : ''}`;
+                block.innerHTML = `
+                    <div class="absolute -left-[30px] top-1 h-4 w-4 rounded-full border-4 border-surface ring-4 ${isDone ? 'bg-secondary ring-secondary/10' : 'bg-surface-bright ring-white/5'}"></div>
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-surface-container-low p-5 rounded-xl border-l-4 ${isDone ? 'border-secondary/30' : 'border-outline-variant/20'} hover:border-primary/50 transition-all cursor-pointer" onclick="togDone(${i},'${b.id}')">
+                        <div>
+                            <h4 class="font-headline font-bold text-on-background">${b.title}</h4>
+                            <p class="text-xs text-on-surface-variant font-body mt-1">${b.exercises}</p>
+                        </div>
+                        <div class="font-label font-bold ${isDone ? 'text-secondary' : 'text-on-surface-variant'} flex items-center gap-2">
+                            <span id="tmr${i}" class="timer-display">${Math.floor(b.duration / 60)}m</span>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(block);
+            });
+        }
+
+        window.togDone = function(idx, id) {
+            if (wstate.done.has(id)) wstate.done.delete(id); else wstate.done.add(id);
+            const ds = getDateStr(selectedDate);
+            const allDone = routineData[currentRoutine].blocks.every(b => wstate.done.has(b.id));
+            workoutData[ds] = { r: currentRoutine, done: Array.from(wstate.done), completed: allDone };
+            updateUI();
+            debouncedSave();
+        };
+
+        function toggleWk() {
+            wstate.started = !wstate.started;
+            const btn = document.getElementById('btn-start-workout');
+            btn.innerHTML = wstate.started ? '<span class="material-symbols-outlined">pause</span> Pause Workout' : '<span class="material-symbols-outlined">not_started</span> Start Workout';
+            if (wstate.started) {
+                totalInterval = setInterval(() => { totalSeconds++; updateTotalTimer(); }, 1000);
+                startSeq();
+            } else {
+                clearInterval(totalInterval);
+                stopSeq();
+            }
+        }
+
+        function startSeq() {
+            const rt = routineData[currentRoutine];
+            let idx = 0;
+            // Find first incomplete block
+            for(let i=0; i<rt.blocks.length; i++) {
+                if(!wstate.done.has(rt.blocks[i].id)) { idx = i; break; }
+            }
+
+            function next() {
+                if (!wstate.started || idx >= rt.blocks.length) {
+                    if(idx >= rt.blocks.length) {
+                        const btn = document.getElementById('btn-start-workout');
+                        btn.innerHTML = '<span class="material-symbols-outlined">verified</span> Completed';
+                        btn.className = "w-full py-4 bg-primary text-on-primary rounded-xl font-headline font-bold flex items-center justify-center gap-3";
+                    }
+                    return;
+                }
+                const b = rt.blocks[idx];
+                let rem = b.duration;
+                const te = document.getElementById(`tmr${idx}`);
+                if (te) te.classList.add('timer-active');
+                
+                wint[idx] = setInterval(() => {
+                    rem--;
+                    if (te) te.textContent = `${Math.floor(rem/60)}:${String(rem%60).padStart(2,'0')}`;
+                    if (rem <= 0) {
+                        clearInterval(wint[idx]);
+                        if (te) { te.classList.remove('timer-active'); te.textContent = 'Done'; }
+                        wstate.done.add(b.id);
+                        togDone(idx, b.id);
+                        idx++; next();
+                    }
+                }, 1000);
+            }
+            next();
+        }
+
+        function stopSeq() { Object.values(wint).forEach(i => clearInterval(i)); wint = {}; }
+
+        function updateTotalTimer() {
+            const m = Math.floor(totalSeconds / 60);
+            const s = totalSeconds % 60;
+            document.getElementById('workout-total-time').textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+        }
+
+        function reset() {
+            stopSeq(); clearInterval(totalInterval);
+            totalSeconds = 0; wstate.started = false; wstate.done = new Set();
+            document.getElementById('btn-start-workout').innerHTML = '<span class="material-symbols-outlined">not_started</span> Start Workout';
+            document.getElementById('btn-start-workout').className = "w-full py-4 bg-secondary-container/20 text-secondary-fixed border border-secondary/20 rounded-xl font-headline font-bold flex items-center justify-center gap-3 hover:bg-secondary-container/30 transition-all";
+            updateTotalTimer();
+            renderTL();
+        }
+
+        document.getElementById('btn-start-workout').onclick = toggleWk;
+        document.getElementById('btn-reset-workout').onclick = reset;
+
+        // --- Navigation ---
+        document.getElementById('nav-dashboard').onclick = () => switchTab('dashboard');
+        document.getElementById('nav-progress').onclick = () => switchTab('progress');
+
+        function switchTab(tab) {
+            const dash = document.getElementById('dashboard-view');
+            const prog = document.getElementById('progress-view');
+            const navD = document.getElementById('nav-dashboard');
+            const navP = document.getElementById('nav-progress');
+
+            if (tab === 'dashboard') {
+                dash.style.display = 'block';
+                prog.style.display = 'none';
+                navD.className = "font-['Manrope'] tracking-tight font-bold uppercase text-sm text-purple-400 border-b-2 border-purple-500 pb-1";
+                navP.className = "font-['Manrope'] tracking-tight font-bold uppercase text-sm text-slate-400 hover:text-slate-200 transition-colors";
+            } else {
+                dash.style.display = 'none';
+                prog.style.display = 'block';
+                navP.className = "font-['Manrope'] tracking-tight font-bold uppercase text-sm text-purple-400 border-b-2 border-purple-500 pb-1";
+                navD.className = "font-['Manrope'] tracking-tight font-bold uppercase text-sm text-slate-400 hover:text-slate-200 transition-colors";
+            }
+        }
+
+        function updateStats() {
+            let streak = 0, weekCount = 0;
+            const todayStr = getDateStr(new Date());
+            const entries = Object.keys(workoutData).sort().reverse();
+            
+            for (let i = 0; i < 365; i++) {
+                const d = new Date(); d.setDate(d.getDate() - i);
+                const ds = getDateStr(d);
+                if (workoutData[ds]) { streak++; } else if (i > 0) break;
+            }
+            
+            for (let i = 0; i < 7; i++) {
+                const d = new Date(); d.setDate(d.getDate() - i);
+                if (workoutData[getDateStr(d)]) weekCount++;
+            }
+
+            document.getElementById('stat-streak').textContent = streak;
+            document.getElementById('stat-total').textContent = Object.keys(workoutData).length;
+            document.getElementById('stat-week').textContent = `${weekCount}/7`;
+            document.getElementById('stat-today').textContent = workoutData[todayStr] ? `Op.${workoutData[todayStr].r}` : '—';
+        }
+
+        // --- Controls ---
+        document.getElementById('btn-prev-day').onclick = () => { const d = new Date(selectedDate); d.setDate(d.getDate() - 1); changeDate(d); };
+        document.getElementById('btn-today').onclick = () => { changeDate(new Date()); };
+        document.getElementById('btn-next-day').onclick = () => { const d = new Date(selectedDate); d.setDate(d.getDate() + 1); changeDate(d); };
+
+        async function init() {
+            await loadFromSupabase();
+            const todayDs = getDateStr(selectedDate);
+            const todayData = workoutData[todayDs];
+            if(todayData) {
+                currentRoutine = todayData.r || 1;
+                wstate.done = new Set(todayData.done || []);
+            }
+            renderRoutineBtns();
+            updateUI();
+            updateFasting();
+            startFastingTimer();
+            updateFastingLog();
+            if (fastingState.started) {
+                document.getElementById('btn-fasting-start').innerHTML = '<span class="material-symbols-outlined">pause</span> Pause Session';
+            }
+        }
+
+        init();
+    </script>
 </body></html>
