@@ -5,244 +5,555 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FLOW — Workout Tracker</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&family=Space+Grotesk:wght@400;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         :root {
-            --bg-primary: #0E0D11;
-            --bg-secondary: #1a191f;
-            --bg-tertiary: #24232b;
-            --text-primary: #f5f5f5;
-            --text-secondary: #b8b8b8;
-            --accent: #c084fc;
-            --success: #6ee659;
+            --bg: #0e0e10;
+            --surface: #19191c;
+            --surface-high: #1f1f22;
+            --surface-highest: #262528;
+            --surface-bright: #2c2c2f;
+            --text: #f9f5f8;
+            --text-dim: #adaaad;
+            --text-muted: #767577;
+            --accent: #cc97ff;
+            --accent-dim: #9c48ea;
+            --accent-container: #c284ff;
+            --green: #6bff8f;
+            --green-dim: #5bf083;
+            --green-dark: #006e2f;
+            --red: #ff6e84;
+            --outline: #48474a;
+            --outline-dim: rgba(72,71,74,0.3);
+            --radius-sm: 0.5rem;
+            --radius-md: 0.75rem;
+            --radius-lg: 1rem;
+            --radius-xl: 1.5rem;
+            --radius-2xl: 2rem;
         }
-        html, body { height: 100%; background: var(--bg-primary); color: var(--text-primary); font-family: 'Segoe UI', system-ui, sans-serif; }
-        body { display: flex; flex-direction: column; }
+        html, body { height: 100%; background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; -webkit-font-smoothing: antialiased; }
+        body { display: flex; flex-direction: column; overflow-x: hidden; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; vertical-align: middle; }
+        .mso-fill { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
 
-        /* HEADER */
-        .header { background: var(--bg-secondary); border-bottom: 1px solid var(--bg-tertiary); padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
-        .header-left { display: flex; align-items: center; gap: 10px; }
-        .header-title { font-size: 18px; font-weight: 700; color: var(--accent); }
-        .sync-indicator { display: flex; align-items: center; gap: 4px; font-size: 8px; color: var(--text-secondary); }
-        .sync-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--bg-tertiary); transition: background 0.3s; }
-        .sync-dot.ok { background: var(--success); }
+        /* GLASS */
+        .glass { background: rgba(25,25,28,0.6); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
+        .glow-primary { text-shadow: 0 0 14px rgba(204,151,255,0.45); }
+        .glow-green { text-shadow: 0 0 14px rgba(107,255,143,0.45); }
+
+        /* SCROLLBAR */
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--outline); border-radius: 10px; }
+
+        /* ── HEADER ─────────────────────────── */
+        .header {
+            position: sticky; top: 0; z-index: 50;
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 12px 16px; height: 56px;
+            background: linear-gradient(180deg, rgba(19,19,21,0.95) 0%, rgba(14,14,16,0.8) 100%);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--outline-dim);
+        }
+        .header-brand { font-family: 'Manrope', sans-serif; font-size: 20px; font-weight: 800; color: var(--accent); letter-spacing: -0.03em; }
+        .header-right { display: flex; align-items: center; gap: 8px; }
+        .sync-pill { display: flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 99px; background: var(--surface); border: 1px solid var(--outline-dim); font-size: 10px; color: var(--text-dim); font-family: 'Space Grotesk', sans-serif; }
+        .sync-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--outline); transition: background 0.3s; }
+        .sync-dot.ok { background: var(--green); box-shadow: 0 0 6px rgba(107,255,143,0.5); }
         .sync-dot.syncing { background: var(--accent); animation: pulse 1s infinite; }
-        .sync-dot.error { background: #f87171; }
-        .date-nav { display: flex; gap: 6px; align-items: center; }
-        .date-btn { padding: 3px 8px; background: var(--bg-tertiary); border: 1px solid var(--bg-primary); color: var(--text-secondary); border-radius: 3px; cursor: pointer; font-size: 9px; transition: all 0.2s; }
-        .date-btn.today { background: var(--accent); color: var(--bg-primary); border-color: var(--accent); }
-        .current-date { color: var(--text-primary); font-weight: 600; font-size: 10px; min-width: 80px; text-align: center; }
+        .sync-dot.error { background: var(--red); }
+        .icon-btn { width: 36px; height: 36px; border-radius: 50%; background: transparent; border: none; color: var(--text-dim); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+        .icon-btn:hover { background: var(--surface-high); color: var(--text); }
 
-        /* CALENDARIO */
-        .calendar-section { background: var(--bg-secondary); border-bottom: 1px solid var(--bg-tertiary); padding: 10px 16px; flex-shrink: 0; }
-        .calendar-title { font-size: 9px; font-weight: 600; text-transform: uppercase; color: var(--accent); margin-bottom: 6px; }
-        .calendar-week { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
-        .calendar-day {
-            height: 40px; display: flex; align-items: center; justify-content: center;
-            border: 1px solid var(--bg-tertiary); border-radius: 3px;
-            background: var(--bg-tertiary); color: var(--text-secondary);
-            font-size: 10px; cursor: pointer; transition: all 0.15s; position: relative; font-weight: 500;
+        /* ── DATE NAV ───────────────────────── */
+        .date-nav {
+            display: flex; align-items: center; justify-content: center; gap: 6px;
+            padding: 10px 16px; background: var(--bg);
         }
-        .calendar-day:hover { background: #2e2d37; color: var(--text-primary); border-color: var(--accent); }
-        .calendar-day.today { background: var(--accent); color: var(--bg-primary); border-color: var(--accent); }
-        .calendar-day.selected { background: rgba(192,132,252,0.22); color: var(--accent); border-color: var(--accent); }
-        .calendar-day.today.selected { background: var(--accent); color: var(--bg-primary); }
-        .calendar-day.workout-done::after { content: '✓'; position: absolute; top: 1px; right: 2px; font-size: 7px; color: var(--success); }
-        .calendar-day.fasting-done::before { content: '✓'; position: absolute; top: 1px; left: 2px; font-size: 7px; color: rgba(110,230,89,0.5); }
+        .date-nav-btn { padding: 6px 10px; border-radius: var(--radius-sm); background: var(--surface); border: 1px solid var(--outline-dim); color: var(--text-dim); cursor: pointer; font-size: 11px; font-family: 'Space Grotesk', sans-serif; font-weight: 700; transition: all 0.2s; }
+        .date-nav-btn:hover { border-color: var(--accent); color: var(--accent); }
+        .date-nav-btn.today-btn { background: var(--accent-dim); color: #fff; border-color: var(--accent-dim); }
+        .date-nav-btn.today-btn:hover { background: var(--accent); }
+        .date-label { font-family: 'Manrope', sans-serif; font-weight: 700; font-size: 13px; min-width: 100px; text-align: center; letter-spacing: -0.02em; }
 
-        /* AYUNO */
-        .fasting-panel { background: var(--bg-secondary); border-bottom: 1px solid var(--bg-tertiary); padding: 12px 16px; flex-shrink: 0; }
-        .fasting-panel-title { font-size: 9px; font-weight: 600; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
-        .fasting-top { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 10px; }
-        .fasting-display { display: flex; flex-direction: column; gap: 2px; min-width: 120px; }
-        .fasting-time { font-size: 22px; font-weight: 700; color: rgba(110, 230, 89, 0.5); font-family: 'Courier New', monospace; }
-        .fasting-stage-name { font-size: 10px; color: var(--accent); font-weight: 700; }
-        .fasting-stage-desc { font-size: 8px; color: var(--text-secondary); margin-top: 2px; line-height: 1.4; max-width: 220px; }
-        .fasting-meta { font-size: 8px; color: var(--text-secondary); margin-top: 4px; line-height: 1.5; }
-        .fasting-log { font-size: 8px; color: var(--success); margin-top: 3px; font-weight: 600; }
-        .fasting-controls { display: flex; gap: 6px; align-items: center; margin-left: auto; }
-        .btn-fasting { padding: 7px 16px; border-radius: 3px; cursor: pointer; font-size: 10px; font-weight: 700; text-transform: uppercase; transition: all 0.2s; border: 1px solid transparent; }
-        .btn-fasting-start { background: var(--success); color: var(--bg-primary); border-color: var(--success); }
-        .btn-fasting-start.active { background: #f87171; border-color: #f87171; }
-        .btn-fasting-close { background: var(--bg-tertiary); color: var(--accent); border-color: var(--accent); }
-        .btn-fasting-close:hover { background: var(--accent); color: var(--bg-primary); }
-        .btn-fasting-reset { background: var(--bg-tertiary); color: var(--text-secondary); border-color: var(--bg-primary); }
-        .btn-fasting-reset:hover { color: var(--text-primary); border-color: var(--accent); }
-        .fasting-offset-wrap { display: flex; align-items: center; gap: 3px; }
-        .offset-label { font-size: 7px; color: var(--text-secondary); text-transform: uppercase; }
-        .offset-input { width: 28px; padding: 4px 3px; background: var(--bg-tertiary); border: 1px solid var(--bg-primary); color: var(--text-primary); border-radius: 3px; font-size: 10px; text-align: center; font-family: 'Courier New', monospace; }
-        .offset-input:focus { outline: none; border-color: var(--accent); }
-        .offset-sep { color: var(--text-secondary); font-size: 10px; }
-        .btn-offset-apply { padding: 4px 7px; background: var(--bg-tertiary); border: 1px solid var(--accent); border-radius: 3px; color: var(--accent); font-size: 9px; font-weight: 700; cursor: pointer; transition: all 0.2s; }
-        .btn-offset-apply:hover { background: var(--accent); color: var(--bg-primary); }
+        /* ── CALENDAR STRIP ─────────────────── */
+        .cal-strip { display: flex; gap: 4px; padding: 0 16px 12px; overflow-x: auto; }
+        .cal-day {
+            flex: 1; min-width: 42px; display: flex; flex-direction: column; align-items: center; gap: 2px;
+            padding: 8px 4px; border-radius: var(--radius-md); background: var(--surface);
+            border: 1px solid transparent; cursor: pointer; transition: all 0.2s; position: relative;
+        }
+        .cal-day:hover { border-color: var(--outline); }
+        .cal-day .cal-weekday { font-family: 'Space Grotesk', sans-serif; font-size: 9px; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.1em; }
+        .cal-day .cal-num { font-family: 'Manrope', sans-serif; font-size: 16px; font-weight: 800; color: var(--text-dim); }
+        .cal-day.today { background: var(--accent-dim); border-color: var(--accent); }
+        .cal-day.today .cal-num { color: #fff; }
+        .cal-day.today .cal-weekday { color: rgba(255,255,255,0.7); }
+        .cal-day.selected:not(.today) { background: rgba(204,151,255,0.12); border-color: var(--accent); }
+        .cal-day.selected:not(.today) .cal-num { color: var(--accent); }
+        .cal-day .cal-dots { display: flex; gap: 3px; margin-top: 2px; }
+        .cal-dot { width: 4px; height: 4px; border-radius: 50%; }
+        .cal-dot.workout { background: var(--green); box-shadow: 0 0 4px rgba(107,255,143,0.5); }
+        .cal-dot.fasting { background: var(--accent); }
 
-        /* Barra progreso ayuno */
-        .fasting-bar-wrap { width: 100%; }
-        .fasting-track { width: 100%; height: 16px; background: var(--bg-tertiary); border-radius: 4px; overflow: hidden; border: 1px solid var(--bg-primary); }
-        .fasting-fill { height: 100%; width: 0%; transition: width 0.5s ease; border-radius: 4px;
-            background: linear-gradient(90deg, #3b82f6 0%, #6ee659 25%, #c084fc 65%, #e5c3ff 100%); }
-        .fasting-ticks { display: flex; position: relative; height: 28px; margin-top: 3px; }
-        .fasting-tick { position: absolute; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 2px; }
-        .fasting-tick-line { width: 1px; height: 4px; background: var(--bg-tertiary); }
-        .fasting-tick.reached .fasting-tick-line { background: var(--accent); }
-        .fasting-tick-label { font-size: 6.5px; color: var(--text-secondary); font-weight: 600; white-space: nowrap; text-align: center; line-height: 1.2; }
-        .fasting-tick.reached .fasting-tick-label { color: var(--accent); }
-        .fasting-tick.current .fasting-tick-label { color: var(--success); }
-        .fasting-tick.current .fasting-tick-line { background: var(--success); width: 2px; }
+        /* ── MAIN SCROLL ────────────────────── */
+        .main-scroll { flex: 1; overflow-y: auto; padding: 0 12px 100px; display: flex; flex-direction: column; gap: 12px; }
 
-        /* MAIN */
-        .main-content { display: flex; flex-direction: column; gap: 10px; flex: 1; overflow: hidden; padding: 12px; }
-
-        .stats-panel { background: var(--bg-secondary); border: 1px solid var(--bg-tertiary); border-radius: 4px; padding: 10px; flex-shrink: 0; }
-        .stats-title { font-size: 9px; font-weight: 600; text-transform: uppercase; color: var(--accent); margin-bottom: 6px; }
-        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; }
-        .stat-box { background: var(--bg-tertiary); padding: 6px; border-radius: 3px; text-align: center; }
-        .stat-value { font-size: 16px; font-weight: 700; color: var(--accent); font-family: 'Courier New', monospace; }
-        .stat-label { font-size: 7px; color: var(--text-secondary); margin-top: 2px; text-transform: uppercase; }
-
-        /* ENTRENAMIENTO */
-        .workout-panel { display: flex; flex-direction: column; gap: 8px; flex: 1; min-height: 0; overflow: hidden; }
-        .workout-header { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-shrink: 0; flex-wrap: wrap; }
-        .workout-header-left { display: flex; align-items: center; gap: 10px; }
-        .workout-title { font-size: 11px; font-weight: 600; text-transform: uppercase; color: var(--text-primary); }
-        .routine-selector { display: flex; gap: 4px; }
-        .routine-btn { padding: 5px 10px; background: var(--bg-tertiary); border: 1px solid var(--bg-primary); color: var(--text-secondary); border-radius: 3px; cursor: pointer; font-size: 9px; font-weight: 700; transition: all 0.2s; }
-        .routine-btn:hover { border-color: var(--accent); }
-        .routine-btn.active { background: var(--accent); color: var(--bg-primary); border-color: var(--accent); }
-        .routine-check { font-size: 7px; color: var(--success); margin-left: 1px; }
-        .routine-btn.active .routine-check { color: var(--bg-primary); }
-        .workout-actions { display: flex; gap: 6px; }
-        .btn-workout { padding: 7px 16px; border-radius: 3px; cursor: pointer; font-size: 10px; font-weight: 700; text-transform: uppercase; transition: all 0.2s; }
-        .btn-iniciar { background: var(--success); color: var(--bg-primary); border: none; }
-        .btn-iniciar.paused { background: #f87171; }
-        .btn-iniciar:hover { opacity: 0.9; }
-        .btn-reset-w { background: var(--bg-tertiary); color: var(--text-primary); border: 1px solid var(--bg-tertiary); }
-        .btn-reset-w:hover { border-color: var(--accent); }
-        .btn-iniciar.done { background: #7c3aed; color: #fff; }
-        .workout-total { font-size: 9px; color: var(--text-secondary); font-family: 'Courier New', monospace; display: flex; align-items: center; gap: 4px; }
-        .workout-total-time { font-size: 13px; font-weight: 700; color: rgba(110,230,89,0.5); }
-        .workout-meta { font-size: 8px; color: var(--text-secondary); line-height: 1.5; padding: 0 2px; flex-shrink: 0; }
-        .workout-meta span.accent { color: var(--accent); font-weight: 600; }
-
-        .timeline-wrapper { flex: 1; display: flex; flex-direction: column; background: var(--bg-secondary); border: 1px solid var(--bg-tertiary); border-radius: 4px; overflow: hidden; min-height: 0; }
-        .timeline-container { flex: 1; overflow-y: auto; padding: 8px; display: flex; flex-direction: column; gap: 6px; }
-        .timeline-block { background: var(--bg-tertiary); border: 1px solid var(--bg-primary); border-radius: 3px; padding: 10px; flex-shrink: 0; min-height: 80px; display: flex; flex-direction: column; }
-        .timeline-block.completed { border-color: var(--success); opacity: 0.5; }
-        .block-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 6px; margin-bottom: 4px; }
-        .block-info { flex: 1; min-width: 0; }
-        .block-title { font-size: 10px; font-weight: 700; color: var(--text-primary); text-transform: uppercase; margin-bottom: 2px; }
-        .block-exercises { font-size: 9px; color: var(--text-primary); line-height: 1.3; }
-        .block-timer { text-align: right; flex-shrink: 0; }
-        .timer-main { font-size: 14px; font-weight: 700; color: rgba(110, 230, 89, 0.5); font-family: 'Courier New', monospace; }
-        .timer-type { font-size: 7px; color: var(--text-secondary); }
-        .btn-mark {
-            width: 100%; height: 24px; margin-top: 6px;
+        /* ── SECTIONS (Glass Cards) ─────────── */
+        .section-card {
             position: relative; overflow: hidden;
-            background: var(--bg-primary); border: 1px solid #333;
-            border-radius: 3px; cursor: pointer;
+            border-radius: var(--radius-xl); padding: 20px;
+            background: rgba(25,25,28,0.55); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(204,151,255,0.08);
+            box-shadow: 0 4px 30px rgba(0,0,0,0.3);
+        }
+        .section-label { font-family: 'Space Grotesk', sans-serif; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.2em; color: var(--green); margin-bottom: 8px; }
+        .section-title { font-family: 'Manrope', sans-serif; font-size: 20px; font-weight: 800; letter-spacing: -0.03em; margin-bottom: 4px; }
+        .section-bg-icon { position: absolute; top: -10px; right: -10px; font-size: 100px; opacity: 0.04; pointer-events: none; color: var(--accent); }
+
+        /* ── FASTING ────────────────────────── */
+        .fasting-time-display { font-family: 'Manrope', sans-serif; font-size: 42px; font-weight: 800; letter-spacing: -0.04em; line-height: 1; }
+        .fasting-target { font-family: 'Space Grotesk', sans-serif; font-size: 18px; color: var(--text-muted); margin-left: 8px; }
+        .fasting-stage-badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 99px; background: rgba(107,255,143,0.1); border: 1px solid rgba(107,255,143,0.2); margin-top: 8px; }
+        .fasting-stage-badge .stage-name { font-family: 'Space Grotesk', sans-serif; font-size: 11px; font-weight: 700; color: var(--green); }
+        .fasting-stage-badge .stage-desc { font-size: 10px; color: var(--text-dim); }
+        .fasting-meta-line { font-size: 10px; color: var(--text-muted); margin-top: 6px; font-family: 'Space Grotesk', sans-serif; }
+        .fasting-log-line { font-size: 10px; color: var(--green); margin-top: 4px; font-weight: 700; font-family: 'Space Grotesk', sans-serif; }
+
+        /* Fasting bar */
+        .fasting-bar { width: 100%; height: 10px; background: var(--surface-highest); border-radius: 99px; overflow: hidden; margin: 14px 0 4px; position: relative; }
+        .fasting-bar-fill { height: 100%; width: 0%; border-radius: 99px; background: linear-gradient(90deg, rgba(204,151,255,0.4) 0%, var(--accent) 50%, var(--green) 100%); box-shadow: 0 0 12px rgba(107,255,143,0.25); transition: width 0.5s ease; }
+        .fasting-bar-markers { position: relative; height: 22px; margin-top: 2px; }
+        .fasting-marker { position: absolute; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 1px; }
+        .fasting-marker-line { width: 1px; height: 4px; background: var(--outline); }
+        .fasting-marker-label { font-family: 'Space Grotesk', sans-serif; font-size: 7px; color: var(--text-muted); font-weight: 700; white-space: nowrap; text-align: center; line-height: 1.15; }
+        .fasting-marker.reached .fasting-marker-line { background: var(--accent); }
+        .fasting-marker.reached .fasting-marker-label { color: var(--accent); }
+        .fasting-marker.current .fasting-marker-line { background: var(--green); width: 2px; }
+        .fasting-marker.current .fasting-marker-label { color: var(--green); }
+
+        /* Fasting buttons */
+        .fasting-btns { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 12px; }
+        .btn-fast { padding: 8px 16px; border-radius: var(--radius-md); cursor: pointer; font-family: 'Space Grotesk', sans-serif; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; transition: all 0.2s; border: 1px solid transparent; display: flex; align-items: center; gap: 5px; }
+        .btn-fast-start { background: linear-gradient(135deg, var(--accent-dim), var(--accent-container)); color: #000; }
+        .btn-fast-start.active { background: linear-gradient(135deg, #d73357, #ff6e84); }
+        .btn-fast-start:hover { box-shadow: 0 0 16px rgba(204,151,255,0.35); }
+        .btn-fast-close { background: var(--surface-high); color: var(--accent); border-color: rgba(204,151,255,0.25); }
+        .btn-fast-close:hover { background: rgba(204,151,255,0.15); }
+        .btn-fast-reset { background: var(--surface-high); color: var(--text-dim); border-color: var(--outline-dim); }
+        .btn-fast-reset:hover { color: var(--text); border-color: var(--outline); }
+
+        /* Offset */
+        .offset-row { display: flex; align-items: center; gap: 4px; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--outline-dim); }
+        .offset-label { font-family: 'Space Grotesk', sans-serif; font-size: 9px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; }
+        .offset-input { width: 32px; padding: 5px 4px; background: var(--surface-highest); border: 1px solid var(--outline-dim); color: var(--text); border-radius: var(--radius-sm); font-size: 12px; text-align: center; font-family: 'Space Grotesk', sans-serif; font-weight: 700; }
+        .offset-input:focus { outline: none; border-color: var(--accent); }
+        .offset-sep { color: var(--text-muted); font-size: 12px; }
+        .btn-offset-ok { padding: 5px 10px; background: var(--surface-high); border: 1px solid rgba(204,151,255,0.25); border-radius: var(--radius-sm); color: var(--accent); font-family: 'Space Grotesk', sans-serif; font-size: 10px; font-weight: 700; cursor: pointer; transition: all 0.2s; }
+        .btn-offset-ok:hover { background: rgba(204,151,255,0.15); }
+
+        /* ── STATS GRID ─────────────────────── */
+        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+        .stat-card { background: var(--surface); border: 1px solid var(--outline-dim); border-radius: var(--radius-md); padding: 12px 8px; text-align: center; }
+        .stat-card .stat-icon { font-size: 18px; color: var(--accent); margin-bottom: 4px; }
+        .stat-card .stat-val { font-family: 'Manrope', sans-serif; font-size: 22px; font-weight: 800; color: var(--accent); }
+        .stat-card .stat-lbl { font-family: 'Space Grotesk', sans-serif; font-size: 8px; text-transform: uppercase; letter-spacing: 0.15em; color: var(--text-muted); margin-top: 2px; }
+
+        /* ── WORKOUT PANEL ──────────────────── */
+        .routine-tabs { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 12px; }
+        .routine-tab {
+            padding: 8px 14px; border-radius: var(--radius-md);
+            background: var(--surface); border: 1px solid var(--outline-dim);
+            color: var(--text-dim); cursor: pointer;
+            font-family: 'Space Grotesk', sans-serif; font-size: 11px; font-weight: 700;
+            transition: all 0.2s; display: flex; align-items: center; gap: 4px;
+        }
+        .routine-tab:hover { border-color: var(--outline); color: var(--text); }
+        .routine-tab.active { background: var(--accent-dim); color: #fff; border-color: var(--accent-dim); }
+        .routine-tab .r-check { font-size: 12px; color: var(--green); }
+        .routine-tab.active .r-check { color: rgba(255,255,255,0.8); }
+
+        /* Session HUD */
+        .session-hud { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 12px; }
+        .session-timer-wrap { display: flex; flex-direction: column; }
+        .session-timer-label { font-family: 'Space Grotesk', sans-serif; font-size: 9px; text-transform: uppercase; letter-spacing: 0.2em; color: var(--text-muted); }
+        .session-timer { font-family: 'Manrope', sans-serif; font-size: 36px; font-weight: 800; letter-spacing: -0.04em; }
+        .session-controls { display: flex; gap: 5px; }
+        .btn-session {
+            padding: 10px 18px; border-radius: var(--radius-md); cursor: pointer;
+            font-family: 'Space Grotesk', sans-serif; font-size: 11px; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.05em; transition: all 0.15s;
+            border: 1px solid transparent; display: flex; align-items: center; gap: 5px;
+        }
+        .btn-session:active { transform: scale(0.96); }
+        .btn-start { background: var(--green); color: #000; }
+        .btn-start.paused { background: var(--red); }
+        .btn-start.done { background: var(--accent-dim); color: #fff; }
+        .btn-start:hover { box-shadow: 0 0 14px rgba(107,255,143,0.3); }
+        .btn-reset { background: var(--surface-high); color: var(--text-dim); border-color: var(--outline-dim); }
+        .btn-reset:hover { border-color: var(--outline); color: var(--text); }
+
+        .workout-meta-line { font-size: 11px; color: var(--text-dim); line-height: 1.5; padding: 4px 0; }
+        .workout-meta-line .wm-accent { color: var(--accent); font-weight: 600; }
+
+        /* Active Exercise HUD */
+        .active-hud { display: none; padding: 16px; border-radius: var(--radius-lg); background: rgba(107,255,143,0.04); border: 1px solid rgba(107,255,143,0.12); margin-bottom: 12px; position: relative; overflow: hidden; }
+        .active-hud.visible { display: block; }
+        .active-hud-glow { position: absolute; top: -30px; right: -30px; width: 100px; height: 100px; background: rgba(107,255,143,0.06); border-radius: 50%; filter: blur(40px); pointer-events: none; }
+        .active-hud-block { font-family: 'Space Grotesk', sans-serif; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.15em; color: var(--accent); margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
+        .active-hud-block .hud-step { background: var(--accent-dim); color: #fff; padding: 2px 8px; border-radius: 99px; font-size: 9px; }
+        .active-hud-sub-name { font-family: 'Manrope', sans-serif; font-size: 22px; font-weight: 800; letter-spacing: -0.03em; color: var(--text); line-height: 1.15; margin-bottom: 4px; }
+        .active-hud-sub-desc { font-size: 12px; color: var(--text-dim); line-height: 1.4; margin-bottom: 10px; }
+        .active-hud-timer { font-family: 'Manrope', sans-serif; font-size: 40px; font-weight: 800; letter-spacing: -0.04em; line-height: 1; }
+        .active-hud-bar { width: 100%; height: 6px; background: var(--surface-highest); border-radius: 99px; overflow: hidden; margin-top: 10px; }
+        .active-hud-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent), var(--green)); border-radius: 99px; transition: width 0.3s linear; }
+        .active-hud-next { font-family: 'Space Grotesk', sans-serif; font-size: 10px; color: var(--text-muted); margin-top: 8px; }
+        .active-hud-next span { color: var(--text-dim); font-weight: 700; }
+
+        @media (min-width: 768px) {
+            .active-hud-sub-name { font-size: 28px; }
+            .active-hud-timer { font-size: 52px; }
+            .active-hud-sub-desc { font-size: 13px; }
+        }
+
+        /* ── TIMELINE ───────────────────────── */
+        .timeline-scroll { max-height: 45vh; overflow-y: auto; border-radius: var(--radius-md); border: 1px solid var(--outline-dim); background: rgba(14,14,16,0.3); padding: 10px; }
+        .timeline { display: flex; flex-direction: column; gap: 0; padding-left: 16px; border-left: 2px solid var(--outline-dim); position: relative; }
+        .tl-block {
+            position: relative; padding: 10px 14px; margin-left: 12px; margin-bottom: 8px;
+            background: var(--surface); border: 1px solid var(--outline-dim);
+            border-radius: var(--radius-md); cursor: pointer; transition: all 0.2s;
+        }
+        .tl-block:hover { border-color: var(--outline); background: var(--surface-high); }
+        .tl-block::before {
+            content: ''; position: absolute; left: -20px; top: 14px;
+            width: 8px; height: 8px; border-radius: 50%;
+            background: var(--outline); border: 2px solid var(--bg);
+            transition: all 0.3s;
+        }
+        .tl-block.completed { opacity: 0.45; border-color: rgba(107,255,143,0.2); }
+        .tl-block.completed::before { background: var(--green); box-shadow: 0 0 8px rgba(107,255,143,0.6); }
+        .tl-block.active-block::before { background: var(--accent); box-shadow: 0 0 10px rgba(204,151,255,0.7); animation: pulse 1.5s infinite; }
+        .tl-block.expanded { border-color: rgba(204,151,255,0.25); }
+
+        .tl-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+        .tl-info { flex: 1; min-width: 0; }
+        .tl-title { font-family: 'Manrope', sans-serif; font-size: 12px; font-weight: 700; margin-bottom: 2px; }
+        .tl-exercises { font-size: 10px; color: var(--text-dim); line-height: 1.3; }
+        .tl-timer-wrap { text-align: right; flex-shrink: 0; }
+        .tl-timer { font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 700; color: rgba(107,255,143,0.5); }
+        .tl-type { font-size: 9px; color: var(--text-muted); }
+        .timer-active { color: var(--green) !important; animation: pulse 1s infinite; }
+
+        /* Sub exercises */
+        .sub-list { display: none; margin-top: 10px; padding-top: 8px; border-top: 1px solid var(--outline-dim); flex-direction: column; gap: 6px; }
+        .tl-block.expanded .sub-list { display: flex; }
+        .sub-item { background: rgba(14,14,16,0.6); border-left: 2px solid var(--accent); padding: 8px 10px; border-radius: var(--radius-sm); }
+        .sub-item-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+        .sub-name { font-family: 'Space Grotesk', sans-serif; font-size: 10px; font-weight: 700; color: var(--accent); margin-bottom: 2px; }
+        .sub-desc { font-size: 9px; color: var(--text-muted); line-height: 1.25; }
+        .sub-time { font-family: 'Space Grotesk', sans-serif; font-size: 11px; font-weight: 700; color: var(--green); white-space: nowrap; }
+        .sub-bar { width: 100%; height: 3px; background: var(--surface-highest); border-radius: 99px; overflow: hidden; margin-top: 5px; }
+        .sub-bar-fill { height: 100%; width: 0%; background: rgba(107,255,143,0.6); transition: width 0.1s linear; border-radius: 99px; }
+
+        /* Mark button */
+        .btn-mark {
+            width: 100%; height: 30px; margin-top: 8px; position: relative; overflow: hidden;
+            background: rgba(14,14,16,0.5); border: 1px solid var(--outline-dim);
+            border-radius: var(--radius-sm); cursor: pointer;
             display: flex; align-items: center; justify-content: center;
-            color: var(--text-secondary); font-size: 9px; font-weight: 700;
-            letter-spacing: 0.05em; transition: color 0.2s, border-color 0.2s;
+            color: var(--text-muted); font-family: 'Space Grotesk', sans-serif;
+            font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+            transition: all 0.2s;
         }
-        .btn-mark-fill {
-            position: absolute; left: 0; top: 0; height: 100%; width: 0%;
-            background: rgba(192, 132, 252, 0.70);
-            transition: width 0.1s linear;
-            pointer-events: none; border-radius: 3px;
-        }
-        .btn-mark-fill.done { background: rgba(110, 230, 89, 0.70); width: 100% !important; }
-        .btn-mark.done { color: var(--success); border-color: var(--success); }
+        .btn-mark:hover { border-color: var(--outline); color: var(--text-dim); }
+        .btn-mark-fill { position: absolute; left: 0; top: 0; height: 100%; width: 0%; background: rgba(204,151,255,0.5); transition: width 0.1s linear; pointer-events: none; border-radius: var(--radius-sm); }
+        .btn-mark-fill.done { background: rgba(107,255,143,0.5); width: 100% !important; }
+        .btn-mark.done { color: var(--green); border-color: rgba(107,255,143,0.3); }
         .btn-mark span { position: relative; z-index: 1; }
 
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
-        .timer-active { animation: pulse 1s infinite; }
+        /* ── DATA VIZ SECTION ───────────────── */
+        .viz-toggle-bar { display: flex; gap: 4px; margin-bottom: 14px; flex-wrap: wrap; }
+        .viz-tab {
+            padding: 6px 12px; border-radius: var(--radius-sm);
+            background: var(--surface); border: 1px solid var(--outline-dim);
+            color: var(--text-muted); cursor: pointer;
+            font-family: 'Space Grotesk', sans-serif; font-size: 10px; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.08em; transition: all 0.2s;
+        }
+        .viz-tab:hover { border-color: var(--outline); color: var(--text); }
+        .viz-tab.active { background: var(--accent-dim); color: #fff; border-color: var(--accent-dim); }
+        .viz-panel { display: none; }
+        .viz-panel.active { display: block; }
+
+        /* Heatmap */
+        .heatmap-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; }
+        .heatmap-header { font-family: 'Space Grotesk', sans-serif; font-size: 8px; text-transform: uppercase; color: var(--text-muted); text-align: center; padding: 4px 0; letter-spacing: 0.1em; }
+        .heatmap-cell {
+            aspect-ratio: 1; border-radius: 4px; background: var(--surface);
+            border: 1px solid transparent; display: flex; align-items: center; justify-content: center;
+            font-family: 'Space Grotesk', sans-serif; font-size: 9px; color: var(--text-muted);
+            transition: all 0.15s; cursor: default; position: relative;
+        }
+        .heatmap-cell.empty { background: transparent; border: none; }
+        .heatmap-cell.has-workout { background: rgba(107,255,143,0.15); border-color: rgba(107,255,143,0.2); color: var(--green); }
+        .heatmap-cell.has-both { background: rgba(204,151,255,0.15); border-color: rgba(204,151,255,0.2); color: var(--accent); }
+        .heatmap-cell.today-cell { border-color: var(--accent); box-shadow: 0 0 6px rgba(204,151,255,0.3); }
+        .heatmap-month-label { font-family: 'Manrope', sans-serif; font-size: 14px; font-weight: 700; text-align: center; margin-bottom: 8px; }
+        .heatmap-nav { display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 10px; }
+        .heatmap-legend { display: flex; gap: 12px; justify-content: center; margin-top: 8px; font-family: 'Space Grotesk', sans-serif; font-size: 9px; color: var(--text-muted); }
+        .heatmap-legend-item { display: flex; align-items: center; gap: 4px; }
+        .heatmap-legend-dot { width: 8px; height: 8px; border-radius: 2px; }
+
+        /* Weekly Chart */
+        .week-chart { display: flex; align-items: flex-end; gap: 4px; height: 120px; padding: 0 4px; }
+        .week-bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; height: 100%; }
+        .week-bar-track { flex: 1; width: 100%; background: var(--surface); border-radius: var(--radius-sm); position: relative; overflow: hidden; display: flex; align-items: flex-end; }
+        .week-bar-fill { width: 100%; border-radius: var(--radius-sm); transition: height 0.4s ease; }
+        .week-bar-label { font-family: 'Space Grotesk', sans-serif; font-size: 8px; color: var(--text-muted); text-transform: uppercase; }
+        .week-bar-value { font-family: 'Space Grotesk', sans-serif; font-size: 9px; font-weight: 700; color: var(--text-dim); }
+        .week-chart-title { font-family: 'Space Grotesk', sans-serif; font-size: 10px; color: var(--text-muted); text-align: center; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.15em; }
+
+        /* Fasting History */
+        .fasting-history { display: flex; flex-direction: column; gap: 4px; }
+        .fh-row { display: flex; align-items: center; gap: 8px; padding: 6px 8px; border-radius: var(--radius-sm); background: var(--surface); }
+        .fh-date { font-family: 'Space Grotesk', sans-serif; font-size: 10px; color: var(--text-muted); min-width: 50px; font-weight: 700; }
+        .fh-bar-track { flex: 1; height: 8px; background: var(--surface-highest); border-radius: 99px; overflow: hidden; }
+        .fh-bar-fill { height: 100%; border-radius: 99px; background: linear-gradient(90deg, var(--accent), var(--green)); transition: width 0.4s; }
+        .fh-value { font-family: 'Space Grotesk', sans-serif; font-size: 10px; color: var(--green); font-weight: 700; min-width: 35px; text-align: right; }
+
+        /* Routine Donut */
+        .donut-wrap { display: flex; align-items: center; justify-content: center; gap: 24px; flex-wrap: wrap; }
+        .donut-svg { width: 130px; height: 130px; }
+        .donut-legend { display: flex; flex-direction: column; gap: 8px; }
+        .donut-legend-item { display: flex; align-items: center; gap: 8px; font-family: 'Space Grotesk', sans-serif; font-size: 11px; }
+        .donut-legend-dot { width: 10px; height: 10px; border-radius: 3px; }
+        .donut-legend-count { font-weight: 700; color: var(--text); }
+
+        /* ── BOTTOM NAV (mobile) ────────────── */
+        .bottom-nav {
+            display: flex; position: fixed; bottom: 0; left: 0; width: 100%; z-index: 50;
+            justify-content: space-around; align-items: center;
+            padding: 8px 16px calc(8px + env(safe-area-inset-bottom));
+            background: rgba(14,14,16,0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border-top: 1px solid var(--outline-dim);
+        }
+        .bnav-item { display: flex; flex-direction: column; align-items: center; gap: 2px; color: var(--text-muted); cursor: pointer; transition: color 0.2s; background: none; border: none; padding: 4px 12px; }
+        .bnav-item:hover, .bnav-item.active { color: var(--green); }
+        .bnav-item .bnav-label { font-family: 'Space Grotesk', sans-serif; font-size: 9px; text-transform: uppercase; letter-spacing: 0.15em; }
+
+        /* ── VIEW MODES ─────────────────────── */
+        .view-section { display: none; }
+        .view-section.active { display: flex; flex-direction: column; gap: 12px; }
+
+        /* ── RESPONSIVE (Desktop) ───────────── */
+        @media (min-width: 768px) {
+            .main-scroll { padding: 0 24px 40px; max-width: 900px; margin: 0 auto; width: 100%; }
+            .section-card { padding: 28px; border-radius: var(--radius-2xl); }
+            .fasting-time-display { font-size: 56px; }
+            .session-timer { font-size: 44px; }
+            .stats-grid { gap: 10px; }
+            .stat-card { padding: 16px 12px; }
+            .stat-card .stat-val { font-size: 28px; }
+            .header { padding: 14px 24px; height: 64px; }
+            .date-nav { padding: 12px 24px; }
+            .cal-strip { padding: 0 24px 16px; gap: 6px; }
+            .cal-day { padding: 10px 6px; }
+            .cal-day .cal-num { font-size: 18px; }
+            .bottom-nav { display: none; }
+            .section-title { font-size: 24px; }
+            .tl-block { padding: 14px 18px; }
+        }
+
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
     </style>
 </head>
 <body>
 
+<!-- HEADER -->
 <header class="header">
-    <div class="header-left">
-        <div class="header-title">⚡ FLOW</div>
-        <div class="sync-indicator">
+    <div class="header-brand">⚡ FLOW</div>
+    <div class="header-right">
+        <div class="sync-pill">
             <div class="sync-dot" id="sync-dot"></div>
             <span id="sync-label">—</span>
         </div>
     </div>
-    <div class="date-nav">
-        <button class="date-btn" id="btn-prev-day">←</button>
-        <div class="current-date" id="current-date"></div>
-        <button class="date-btn today" id="btn-today">HOY</button>
-        <button class="date-btn" id="btn-next-day">→</button>
-    </div>
 </header>
 
-<section class="calendar-section">
-    <div class="calendar-title">Últimos 7 días</div>
-    <div class="calendar-week" id="calendar-week"></div>
-</section>
+<!-- DATE NAV -->
+<div class="date-nav">
+    <button class="date-nav-btn" id="btn-prev-day"><span class="material-symbols-outlined" style="font-size:16px;">chevron_left</span></button>
+    <div class="date-label" id="current-date"></div>
+    <button class="date-nav-btn today-btn" id="btn-today">Hoy</button>
+    <button class="date-nav-btn" id="btn-next-day"><span class="material-symbols-outlined" style="font-size:16px;">chevron_right</span></button>
+</div>
 
-<section class="fasting-panel">
-    <div class="fasting-panel-title">Ayuno intermitente</div>
-    <div class="fasting-top">
-        <div class="fasting-display">
-            <div class="fasting-time" id="fasting-time">00:00:00</div>
-            <div class="fasting-stage-name" id="fasting-stage-name">Alimentado</div>
-            <div class="fasting-stage-desc" id="fasting-stage-desc">Digiriendo • Insulina alta • Energía de glucosa</div>
-            <div class="fasting-meta" id="fasting-meta"></div>
-            <div class="fasting-log" id="fasting-log"></div>
-        </div>
-        <div class="fasting-controls">
-            <button class="btn-fasting btn-fasting-start" id="btn-fasting-start">Iniciar</button>
-            <button class="btn-fasting btn-fasting-close" id="btn-fasting-close">Cerrar</button>
-            <button class="btn-fasting btn-fasting-reset" id="btn-fasting-reset">Reset</button>
-            <div class="fasting-offset-wrap">
+<!-- CALENDAR STRIP -->
+<div class="cal-strip" id="calendar-week"></div>
+
+<!-- MAIN SCROLLABLE -->
+<div class="main-scroll">
+
+    <!-- ══ VIEW: HOME ══ -->
+    <div class="view-section active" id="view-home">
+
+        <!-- FASTING -->
+        <section class="section-card" id="fasting-section">
+            <span class="material-symbols-outlined section-bg-icon mso-fill">timer</span>
+            <div class="section-label">Ayuno Intermitente</div>
+            <div style="display:flex;align-items:baseline;gap:4px;flex-wrap:wrap;">
+                <div class="fasting-time-display glow-primary" id="fasting-time">00:00:00</div>
+                <span class="fasting-target">/ 24:00</span>
+            </div>
+            <div class="fasting-stage-badge">
+                <span class="material-symbols-outlined mso-fill" style="font-size:14px;color:var(--green);">bolt</span>
+                <span class="stage-name" id="fasting-stage-name">Alimentado</span>
+            </div>
+            <div style="font-size:10px;color:var(--text-dim);margin-top:4px;" id="fasting-stage-desc">Digiriendo • Insulina alta • Energía de glucosa</div>
+            <div class="fasting-meta-line" id="fasting-meta"></div>
+            <div class="fasting-log-line" id="fasting-log"></div>
+            <div class="fasting-bar" id="fasting-bar"><div class="fasting-bar-fill" id="fasting-fill"></div></div>
+            <div class="fasting-bar-markers" id="fasting-ticks"></div>
+            <div class="fasting-btns">
+                <button class="btn-fast btn-fast-start" id="btn-fasting-start"><span class="material-symbols-outlined" style="font-size:14px;">play_arrow</span> Iniciar</button>
+                <button class="btn-fast btn-fast-close" id="btn-fasting-close"><span class="material-symbols-outlined" style="font-size:14px;">save</span> Cerrar</button>
+                <button class="btn-fast btn-fast-reset" id="btn-fasting-reset"><span class="material-symbols-outlined" style="font-size:14px;">refresh</span> Reset</button>
+            </div>
+            <div class="offset-row">
                 <span class="offset-label">+offset</span>
                 <input type="number" id="offset-h" min="0" max="23" value="0" class="offset-input" placeholder="hh">
                 <span class="offset-sep">:</span>
                 <input type="number" id="offset-m" min="0" max="59" value="0" class="offset-input" placeholder="mm">
-                <button class="btn-offset-apply" id="btn-offset-apply">OK</button>
+                <button class="btn-offset-ok" id="btn-offset-apply">OK</button>
             </div>
-        </div>
-    </div>
-    <div class="fasting-bar-wrap">
-        <div class="fasting-track"><div class="fasting-fill" id="fasting-fill"></div></div>
-        <div class="fasting-ticks" id="fasting-ticks"></div>
-    </div>
-</section>
+        </section>
 
-<div class="main-content">
-    <div class="stats-panel">
-        <div class="stats-title">Stats</div>
-        <div class="stats-grid">
-            <div class="stat-box"><div class="stat-value" id="stat-streak">0</div><div class="stat-label">Racha</div></div>
-            <div class="stat-box"><div class="stat-value" id="stat-total">0</div><div class="stat-label">Total</div></div>
-            <div class="stat-box"><div class="stat-value" id="stat-week">0</div><div class="stat-label">Semana</div></div>
-            <div class="stat-box"><div class="stat-value" id="stat-today">—</div><div class="stat-label">Hoy</div></div>
-        </div>
+        <!-- STATS -->
+        <section class="section-card">
+            <span class="material-symbols-outlined section-bg-icon mso-fill">monitoring</span>
+            <div class="section-label">Stats</div>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon"><span class="material-symbols-outlined mso-fill" style="font-size:18px;">local_fire_department</span></div>
+                    <div class="stat-val" id="stat-streak">0</div>
+                    <div class="stat-lbl">Racha</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><span class="material-symbols-outlined mso-fill" style="font-size:18px;">fitness_center</span></div>
+                    <div class="stat-val" id="stat-total">0</div>
+                    <div class="stat-lbl">Total</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><span class="material-symbols-outlined mso-fill" style="font-size:18px;">date_range</span></div>
+                    <div class="stat-val" id="stat-week">0</div>
+                    <div class="stat-lbl">Semana</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><span class="material-symbols-outlined mso-fill" style="font-size:18px;">today</span></div>
+                    <div class="stat-val" id="stat-today">—</div>
+                    <div class="stat-lbl">Hoy</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- WORKOUT -->
+        <section class="section-card" style="padding-bottom:14px;">
+            <span class="material-symbols-outlined section-bg-icon mso-fill">exercise</span>
+            <div class="section-label">Entrenamiento</div>
+            <div class="routine-tabs" id="routine-selector"></div>
+            <div class="session-hud">
+                <div class="session-timer-wrap">
+                    <div class="session-timer-label">Tiempo total</div>
+                    <div class="session-timer glow-green" id="workout-total-time">00:00</div>
+                </div>
+                <div class="session-controls">
+                    <button class="btn-session btn-start" id="btn-start-workout"><span class="material-symbols-outlined" style="font-size:16px;">play_arrow</span> Iniciar</button>
+                    <button class="btn-session btn-reset" id="btn-reset-workout"><span class="material-symbols-outlined" style="font-size:16px;">refresh</span></button>
+                </div>
+            </div>
+            <div class="workout-meta-line" id="workout-meta"></div>
+            <div class="active-hud" id="active-hud">
+                <div class="active-hud-glow"></div>
+                <div class="active-hud-block" id="hud-block-label"></div>
+                <div class="active-hud-sub-name" id="hud-sub-name">—</div>
+                <div class="active-hud-sub-desc" id="hud-sub-desc"></div>
+                <div class="active-hud-timer glow-green" id="hud-timer">00:00</div>
+                <div class="active-hud-bar"><div class="active-hud-bar-fill" id="hud-bar-fill"></div></div>
+                <div class="active-hud-next" id="hud-next"></div>
+            </div>
+            <div class="timeline-scroll" id="timeline-scroll">
+                <div class="timeline" id="timeline-container"></div>
+            </div>
+        </section>
     </div>
-    <div class="workout-panel">
-        <div class="workout-header">
-            <div class="workout-header-left">
-                <div class="workout-title">Entrenamiento</div>
-                <div class="routine-selector" id="routine-selector"></div>
+
+    <!-- ══ VIEW: PROGRESS ══ -->
+    <div class="view-section" id="view-progress">
+        <section class="section-card">
+            <span class="material-symbols-outlined section-bg-icon mso-fill">insights</span>
+            <div class="section-label">Análisis de datos</div>
+            <div class="section-title">Progreso</div>
+            <div class="viz-toggle-bar" id="viz-tabs">
+                <button class="viz-tab active" data-viz="heatmap">Heatmap</button>
+                <button class="viz-tab" data-viz="weekly">Semanal</button>
+                <button class="viz-tab" data-viz="fasting-hist">Ayunos</button>
+                <button class="viz-tab" data-viz="routines">Rutinas</button>
             </div>
-            <div class="workout-total">
-                <span>Total</span>
-                <span class="workout-total-time" id="workout-total-time">00:00</span>
+
+            <!-- HEATMAP -->
+            <div class="viz-panel active" id="viz-heatmap">
+                <div class="heatmap-nav">
+                    <button class="icon-btn" id="hm-prev"><span class="material-symbols-outlined">chevron_left</span></button>
+                    <div class="heatmap-month-label" id="hm-month-label"></div>
+                    <button class="icon-btn" id="hm-next"><span class="material-symbols-outlined">chevron_right</span></button>
+                </div>
+                <div class="heatmap-grid" id="heatmap-grid"></div>
+                <div class="heatmap-legend">
+                    <div class="heatmap-legend-item"><div class="heatmap-legend-dot" style="background:var(--surface);border:1px solid var(--outline-dim);"></div> Sin datos</div>
+                    <div class="heatmap-legend-item"><div class="heatmap-legend-dot" style="background:rgba(107,255,143,0.15);border:1px solid rgba(107,255,143,0.2);"></div> Workout</div>
+                    <div class="heatmap-legend-item"><div class="heatmap-legend-dot" style="background:rgba(204,151,255,0.15);border:1px solid rgba(204,151,255,0.2);"></div> Workout + Ayuno</div>
+                </div>
             </div>
-            <div class="workout-actions">
-                <button class="btn-workout btn-iniciar" id="btn-start-workout">INICIAR</button>
-                <button class="btn-workout btn-reset-w" id="btn-reset-workout">RESET</button>
+
+            <!-- WEEKLY -->
+            <div class="viz-panel" id="viz-weekly">
+                <div class="week-chart-title">Últimas 8 semanas — días entrenados</div>
+                <div class="week-chart" id="week-chart"></div>
             </div>
-        </div>
-        <div class="workout-meta" id="workout-meta"></div>
-        <div class="timeline-wrapper">
-            <div class="timeline-container" id="timeline-container"></div>
-        </div>
+
+            <!-- FASTING HISTORY -->
+            <div class="viz-panel" id="viz-fasting-hist">
+                <div class="week-chart-title">Últimos 14 ayunos registrados</div>
+                <div class="fasting-history" id="fasting-history"></div>
+            </div>
+
+            <!-- ROUTINES DONUT -->
+            <div class="viz-panel" id="viz-routines">
+                <div class="week-chart-title">Distribución de rutinas</div>
+                <div class="donut-wrap" id="donut-wrap"></div>
+            </div>
+        </section>
     </div>
+
 </div>
 
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+    <button class="bnav-item active" data-view="home">
+        <span class="material-symbols-outlined mso-fill">home</span>
+        <span class="bnav-label">Home</span>
+    </button>
+    <button class="bnav-item" data-view="progress">
+        <span class="material-symbols-outlined">insights</span>
+        <span class="bnav-label">Progreso</span>
+    </button>
+</nav>
+
 <script>
+    // ── SUPABASE ──────────────────────────────────────────────
     const SUPABASE_URL = 'https://tbhrpphmscndekpnnerl.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRiaHJwcGhtc2NuZGVrcG5uZXJsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM3ODI4NjcsImV4cCI6MjA4OTM1ODg2N30.6KH1xDoqg_CLM5K4P1f_YVEUi111s5Z4Xtn90fF0FFU';
     const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -252,7 +563,7 @@
         document.getElementById('sync-label').textContent = label;
     }
 
-    // ── ETAPAS DE AYUNO ───────────────────────────────────────
+    // ── FASTING STAGES ────────────────────────────────────────
     const FASTING_MAX_H = 24;
     const fastingStages = [
         { name: 'Alimentado',    hours: 0,  desc: 'Digiriendo • Insulina alta • Energía de glucosa' },
@@ -260,70 +571,253 @@
         { name: 'Cambio metab.', hours: 12, desc: 'Glucógeno agotado • Empieza quema de grasa' },
         { name: 'Quema grasa',   hours: 16, desc: 'Modo grasa • Cetonas • Posible claridad mental' },
         { name: 'Autofagia',     hours: 24, desc: 'Reciclaje celular activo • Insulina muy baja' },
-
     ];
 
-    // ── RUTINAS ───────────────────────────────────────────────
+    // ── ROUTINES ──────────────────────────────────────────────
     const routineData = {
         1: { name: "Pierna Fuerte", blocks: [
-            { id: "w",   title: "Activación",     duration: 300, type: "warmup",   exercises: "Golpes 1kg • Rodillas • Movilidad" },
-            { id: "c1q", title: "Ciclo 1 Quema",  duration: 420, type: "cardio",   exercises: "Jump squat • Sent+Punch • Lateral lunge" },
-            { id: "c1f", title: "Ciclo 1 Fuerza", duration: 180, type: "strength", exercises: "Sent goblet+Press 5kg" },
-            { id: "c2q", title: "Ciclo 2 Quema",  duration: 420, type: "cardio",   exercises: "Zancadas • Hip thrust • DL jump" },
-            { id: "c2f", title: "Ciclo 2 Fuerza", duration: 180, type: "strength", exercises: "Peso muerto+Fila 5kg" },
-            { id: "c3q", title: "Ciclo 3 Quema",  duration: 420, type: "cardio",   exercises: "Burpee • Sent+Golpe • Mountain climbers" },
-            { id: "c3f", title: "Ciclo 3 Fuerza", duration: 180, type: "strength", exercises: "Lunge+Remo 5kg" },
-            { id: "c4q", title: "Ciclo 4 Quema",  duration: 420, type: "cardio",   exercises: "Sent rápida • Golpes+Rodillas • Lateral lunge" },
-            { id: "c4f", title: "Ciclo 4 Fuerza", duration: 180, type: "strength", exercises: "Clean+Squat+Press 5kg" },
-            { id: "c5q", title: "Ciclo 5 Quema",  duration: 300, type: "cardio",   exercises: "Jump squat • Punch • High knees • Burpee" },
-            { id: "c5f", title: "Ciclo 5 Fuerza", duration: 300, type: "strength", exercises: "Sent+Press • Zancada+Remo • DM" },
-            { id: "cd",  title: "Cool-down",       duration: 600, type: "cooldown", exercises: "Caminata • Stretching • Respiración" }
+            { id: "w",   title: "Activación",     duration: 300, type: "warmup",   exercises: "Golpes con mancuerna 1kg (30 golpes) • Saltar levantando rodillas alternadas (30-40 reps) • Movilidad de cadera y hombros", subExercises: [
+                { name: "Golpes con mancuerna 1kg", time: 60, desc: "Puños directos rápidos, alternando brazos • Mantén codos pegados" },
+                { name: "Saltar levantando rodillas", time: 60, desc: "Rodillas hacia el pecho • Ritmo constante y rápido • 30-40 reps" },
+                { name: "Movilidad de cadera/hombros", time: 60, desc: "Rotaciones de cadera • Círculos de hombro hacia atrás" },
+                { name: "Golpes con mancuerna 1kg", time: 60, desc: "Puños directos rápidos, alternando brazos" },
+                { name: "Saltar levantando rodillas", time: 60, desc: "Rodillas hacia el pecho • Ritmo constante" }
+            ]},
+            { id: "c1q", title: "Ciclo 1 Quema",  duration: 420, type: "cardio",   exercises: "Salto con sentadilla intenso (15-20 reps) • Sentadilla con puño frontal rápido (20-25 reps) • Zancada lateral dinámica (20-25 reps)", subExercises: [
+                { name: "Salto con sentadilla intenso", time: 90, desc: "Baja rápido, salta explosivamente • 15-20 reps • Ritmo explosivo" },
+                { name: "Sentadilla + Puño frontal", time: 90, desc: "Baja profunda, puños alternos al subir • 20-25 reps" },
+                { name: "Zancada lateral dinámica", time: 90, desc: "Paso lateral, baja cadera • 20-25 reps totales" },
+                { name: "Descanso/Transición", time: 150, desc: "Caminata suave, recuperación cardíaca • Mantén movimiento" }
+            ]},
+            { id: "c1f", title: "Ciclo 1 Fuerza", duration: 180, type: "strength", exercises: "Sentadilla goblet con mancuerna 5kg + Press arriba (12-15 reps, tempo lento)", subExercises: [
+                { name: "Goblet Squat + Press 5kg", time: 180, desc: "Sentadilla profunda controlada • Press arriba en subida • 12-15 reps • Tempo lento, pausa 2s arriba" }
+            ]},
+            { id: "c2q", title: "Ciclo 2 Quema",  duration: 420, type: "cardio",   exercises: "Zancadas caminando intenso (20-24 reps) • Hip thrust rápido (25-30 reps) • Peso muerto + Salto (15-20 reps)", subExercises: [
+                { name: "Zancadas caminando intenso", time: 90, desc: "Paso largo, baja profunda • 20-24 reps • Mantén velocidad" },
+                { name: "Hip thrust rápido", time: 90, desc: "Glúteos hacia el techo • Rápido y controlado • 25-30 reps" },
+                { name: "Peso muerto + Salto", time: 90, desc: "Peso muerto explosivo seguido de salto • 15-20 reps" },
+                { name: "Descanso/Transición", time: 150, desc: "Caminata suave, recuperación • Mantén movimiento" }
+            ]},
+            { id: "c2f", title: "Ciclo 2 Fuerza", duration: 180, type: "strength", exercises: "Peso muerto rumano 5kg + Fila bilateral (10-12 reps)", subExercises: [
+                { name: "RDL + Fila bilateral 5kg", time: 180, desc: "Peso muerto rumano controlado • Fila bilateral apretando omóplatos • 10-12 reps • Pausa 2s en fila" }
+            ]},
+            { id: "c3q", title: "Ciclo 3 Quema",  duration: 420, type: "cardio",   exercises: "Burpees (12-15 reps) • Sentadilla + Puño frontal rápido (25-30 reps) • Mountain climbers (40-50 reps)", subExercises: [
+                { name: "Burpees explosivos", time: 90, desc: "Push-up + Sentadilla con salto • 12-15 reps • Explosivo" },
+                { name: "Sentadilla + Puño frontal", time: 90, desc: "Baja rápida, puños al subir • 25-30 reps" },
+                { name: "Mountain climbers", time: 90, desc: "Rodillas al pecho alternadas • Máxima velocidad • 40-50 reps" },
+                { name: "Descanso/Transición", time: 150, desc: "Caminata suave, recuperación cardíaca" }
+            ]},
+            { id: "c3f", title: "Ciclo 3 Fuerza", duration: 180, type: "strength", exercises: "Zancada profunda 5kg + Fila con brazo opuesto (12 reps totales)", subExercises: [
+                { name: "Zancada profunda + Fila unilateral 5kg", time: 180, desc: "Zancada profunda • Fila con brazo opuesto al impulso • 12 reps totales (6 cada lado) • Tempo controlado" }
+            ]},
+            { id: "c4q", title: "Ciclo 4 Quema",  duration: 420, type: "cardio",   exercises: "Sentadillas rápidas sin peso (40-50 reps) • Puños combinados + Salto de rodillas (alterna) • Zancada lateral intenso (30-35 reps)", subExercises: [
+                { name: "Sentadillas rápidas", time: 90, desc: "Sin peso, apenas toca glúteos en baja • Máxima velocidad • 40-50 reps" },
+                { name: "Puños + Salto de rodillas", time: 90, desc: "Puños combinados + Salto rodillas alternadas • 30-40 reps combinadas" },
+                { name: "Zancada lateral intenso", time: 90, desc: "Paso lateral explosivo • 30-35 reps totales" },
+                { name: "Descanso/Transición", time: 150, desc: "Caminata suave, recuperación" }
+            ]},
+            { id: "c4f", title: "Ciclo 4 Fuerza", duration: 180, type: "strength", exercises: "Levantada + Sentadilla + Press (Clean Complex) 5kg (8-10 reps)", subExercises: [
+                { name: "Clean + Squat + Press 5kg", time: 180, desc: "Levantada explosiva • Sentadilla en front rack • Press arriba • 8-10 reps • Control en toda la secuencia" }
+            ]},
+            { id: "c5q", title: "Ciclo 5 Quema",  duration: 300, type: "cardio",   exercises: "Salto con sentadilla intenso (15-20 reps) • Puños combinados velocidad máxima (60-80 puños) • Saltar rodillas alternadas (40-50 reps)", subExercises: [
+                { name: "Salto con sentadilla intenso", time: 100, desc: "Sentadilla explosiva con salto • 15-20 reps • Máxima intensidad" },
+                { name: "Puños máxima velocidad", time: 100, desc: "Combinaciones rápidas • 60-80 puños • Velocidad MÁXIMA" },
+                { name: "Saltar rodillas alternadas", time: 100, desc: "Rodillas al pecho • 40-50 reps • Ritmo explosivo" }
+            ]},
+            { id: "c5f", title: "Ciclo 5 Fuerza", duration: 300, type: "strength", exercises: "Sentadilla + Press 5kg (10-12 reps) • Zancada profunda 5kg + Fila (10 reps) • Peso muerto 5kg (12-15 reps)", subExercises: [
+                { name: "Sentadilla + Press 5kg", time: 100, desc: "Sentadilla profunda • Press en subida • 10-12 reps • Pausa 2s arriba" },
+                { name: "Zancada profunda + Fila 5kg", time: 100, desc: "Zancada profunda alternada • Fila al subir • 10 reps (5 cada lado)" },
+                { name: "Peso muerto 5kg", time: 100, desc: "Peso muerto completo controlado • 12-15 reps • Pausa 1s arriba" }
+            ]},
+            { id: "cd",  title: "Cool-down",       duration: 600, type: "cooldown", exercises: "Caminata lenta de recuperación (200s) • Estiramientos profundos (300s) • Respiración controlada (100s)", subExercises: [
+                { name: "Caminata lenta de recuperación", time: 200, desc: "Paseo muy lento • Recupera la respiración gradualmente" },
+                { name: "Estiramientos profundos", time: 300, desc: "Piernas, caderas, espalda baja • Mantén 20-30s cada estiramiento" },
+                { name: "Respiración controlada", time: 100, desc: "Inhalaciones profundas • Exhala lentamente • Relaja cuerpo y mente" }
+            ]}
         ]},
         2: { name: "Cardio Alto", blocks: [
-            { id: "w",   title: "Activación",     duration: 300, type: "warmup",   exercises: "Golpes 1kg • Rodillas rápido • Movilidad" },
-            { id: "c1q", title: "Ciclo 1 Quema",  duration: 420, type: "cardio",   exercises: "Punch 1kg • Sent+Overhead punch • Lateral raise" },
-            { id: "c1f", title: "Ciclo 1 Fuerza", duration: 180, type: "strength", exercises: "Press+Sent 5kg" },
-            { id: "c2q", title: "Ciclo 2 Quema",  duration: 420, type: "cardio",   exercises: "Lateral lunge+Raise • Side-to-side • Punch lateral" },
-            { id: "c2f", title: "Ciclo 2 Fuerza", duration: 180, type: "strength", exercises: "Lateral lunge+Press unilateral 5kg" },
-            { id: "c3q", title: "Ciclo 3 Quema",  duration: 420, type: "cardio",   exercises: "Sent+Punch • Zancada+Golpe • Burpee • High knees" },
-            { id: "c3f", title: "Ciclo 3 Fuerza", duration: 180, type: "strength", exercises: "Clean+Squat+Press 5kg" },
-            { id: "c4q", title: "Ciclo 4 HIIT",   duration: 420, type: "cardio",   exercises: "Jump squat • Burpee • Mountain climbers • Punch" },
-            { id: "c4f", title: "Ciclo 4 Fuerza", duration: 180, type: "strength", exercises: "Peso muerto+Remo+Golpe 5kg" },
-            { id: "c5q", title: "Ciclo 5 Quema",  duration: 300, type: "cardio",   exercises: "Burpee • Punch • Jump squat • High knees" },
-            { id: "c5f", title: "Ciclo 5 Fuerza", duration: 300, type: "strength", exercises: "Sent+Press • Clean+Press • DM" },
-            { id: "cd",  title: "Cool-down",       duration: 600, type: "cooldown", exercises: "Caminata • Stretching • Respiración" }
+            { id: "w",   title: "Activación",     duration: 300, type: "warmup",   exercises: "Golpes 1kg muy rápido (40-50 puños) • Saltar rodillas altas intensas alternadas (35-45 reps) • Movilidad dinámica de brazos", subExercises: [
+                { name: "Golpes con mancuerna 1kg", time: 60, desc: "Puños muy rápidos, alternando brazos • Ritmo elevado • 40-50 puños" },
+                { name: "Saltar rodillas altas", time: 60, desc: "Rodillas hacia el pecho • Intensidad media-alta • 35-45 reps" },
+                { name: "Movilidad dinámica de brazos", time: 60, desc: "Rotaciones, círculos de hombro hacia atrás • Completo" },
+                { name: "Golpes rápidos repeat", time: 60, desc: "Puños muy rápidos • Mantén la velocidad • 40-50 puños" },
+                { name: "Saltar rodillas altas repeat", time: 60, desc: "Rodillas al pecho • Velocidad constante • 35-45 reps" }
+            ]},
+            { id: "c1q", title: "Ciclo 1 Quema",  duration: 420, type: "cardio",   exercises: "Puños combinados 1kg muy rápido (50-60 combinaciones) • Sentadilla + Puño frontal hacia arriba (25-30 reps) • Elevación lateral de brazo rápida 1kg (40-50 reps)", subExercises: [
+                { name: "Puños combinados 1kg muy rápido", time: 90, desc: "Directos, cruzados, ganchos • 50-60 combinaciones • Máxima velocidad" },
+                { name: "Sentadilla + Puño frontal 1kg", time: 90, desc: "Baja rápida, puños directos arriba • 25-30 reps" },
+                { name: "Elevación lateral 1kg", time: 90, desc: "Brazos hacia los lados • Movimiento rápido • 40-50 reps" },
+                { name: "Descanso/Transición", time: 150, desc: "Caminata suave, recuperación cardíaca • Mantén movimiento" }
+            ]},
+            { id: "c1f", title: "Ciclo 1 Fuerza", duration: 180, type: "strength", exercises: "Press arriba con mancuerna 5kg + Sentadilla (12-15 reps)", subExercises: [
+                { name: "Press + Sentadilla 5kg", time: 180, desc: "Press arriba • Baja a sentadilla profunda • 12-15 reps alternando secuencia" }
+            ]},
+            { id: "c2q", title: "Ciclo 2 Quema",  duration: 420, type: "cardio",   exercises: "Zancada lateral + Elevación lateral de brazo 1kg (20-25 reps) • Desplazamientos laterales rápidos (60-80 pasos) • Puños laterales explosivos 1kg (50-60 puños)", subExercises: [
+                { name: "Zancada lateral + Elevación lateral 1kg", time: 90, desc: "Paso lateral explosivo • Elevar brazo al lateral al subir • 20-25 reps" },
+                { name: "Desplazamientos laterales rápidos", time: 90, desc: "Pasos laterales muy rápidos • Máxima velocidad • 60-80 pasos" },
+                { name: "Puños laterales explosivos 1kg", time: 90, desc: "Ganchos y puños laterales con potencia • 50-60 puños" },
+                { name: "Descanso/Transición", time: 150, desc: "Caminata suave, recuperación • Mantén movimiento" }
+            ]},
+            { id: "c2f", title: "Ciclo 2 Fuerza", duration: 180, type: "strength", exercises: "Zancada lateral profunda 5kg + Press lateral unilateral (12 reps totales)", subExercises: [
+                { name: "Zancada lateral + Press lateral 5kg", time: 180, desc: "Zancada lateral profunda • Press lateral unilateral al subir • 12 reps totales (6 cada lado) • Tempo controlado" }
+            ]},
+            { id: "c3q", title: "Ciclo 3 Quema",  duration: 420, type: "cardio",   exercises: "Sentadilla + Puño rápido intenso 1kg (30-35 reps) • Zancada caminando + Golpe combinado 1kg (20-25 zancadas) • Burpees rápidos (12-15 reps)", subExercises: [
+                { name: "Sentadilla + Puño 1kg intenso", time: 90, desc: "Baja rápida, puños rápidos al subir • 30-35 reps • Ritmo cardio" },
+                { name: "Zancada caminando + Golpe 1kg", time: 90, desc: "Paso largo, puño directo en cada zancada • 20-25 zancadas" },
+                { name: "Burpees rápidos", time: 90, desc: "Push-up • Sentadilla • Salto explosivo • 12-15 reps • Ritmo rápido" },
+                { name: "Descanso/Transición", time: 150, desc: "Caminata suave, recuperación • Mantén movimiento" }
+            ]},
+            { id: "c3f", title: "Ciclo 3 Fuerza", duration: 180, type: "strength", exercises: "Levantada (Clean) + Sentadilla + Press arriba 5kg (10-12 reps)", subExercises: [
+                { name: "Clean + Squat + Press 5kg", time: 180, desc: "Levantada explosiva a hombros • Sentadilla en front rack • Press arriba • 10-12 reps • Control en toda la secuencia" }
+            ]},
+            { id: "c4q", title: "Ciclo 4 HIIT",  duration: 420, type: "cardio",   exercises: "Jump squat intenso (20-25 reps) • Burpees con velocidad (12-15 reps) • Mountain climbers muy rápido (50-60 reps) • Puños directos intensos (80-100 puños)", subExercises: [
+                { name: "Jump squat intenso", time: 105, desc: "Sentadilla explosiva con salto alto • 20-25 reps • Máxima intensidad" },
+                { name: "Burpees con velocidad", time: 105, desc: "Push-up • Sentadilla • Salto explosivo • 12-15 reps • Máxima velocidad" },
+                { name: "Mountain climbers muy rápido", time: 105, desc: "Rodillas al pecho alternadas • Máxima velocidad • 50-60 reps" },
+                { name: "Puños directos intensos", time: 105, desc: "Golpes directos continuos • 80-100 puños • Potencia máxima" }
+            ]},
+            { id: "c4f", title: "Ciclo 4 Fuerza", duration: 180, type: "strength", exercises: "Peso muerto 5kg + Fila bilateral + Puño (10-12 reps)", subExercises: [
+                { name: "Peso muerto + Fila bilateral 5kg", time: 180, desc: "Peso muerto explosivo • Fila bilateral con apriete fuerte • 10-12 reps • Pausa 2s en fila" }
+            ]},
+            { id: "c5q", title: "Ciclo 5 Quema",  duration: 300, type: "cardio",   exercises: "Burpees continuos rápidos (12-15 reps) • Puños muy rápidos MÁXIMA VELOCIDAD (100-120 puños) • Jump squat intenso (20-25 reps)", subExercises: [
+                { name: "Burpees continuos rápidos", time: 100, desc: "Push-up • Sentadilla • Salto • 12-15 reps • Sin pausa entre reps" },
+                { name: "Puños MÁXIMA VELOCIDAD", time: 100, desc: "Directos + cruzados + ganchos MÁXIMO SPEED • 100-120 puños en total" },
+                { name: "Jump squat intenso", time: 100, desc: "Sentadilla explosiva con salto • 20-25 reps • Potencia total" }
+            ]},
+            { id: "c5f", title: "Ciclo 5 Fuerza", duration: 300, type: "strength", exercises: "Sentadilla + Press 5kg (10-12 reps) • Levantada + Press 5kg (10-12 reps) • Peso muerto 5kg (12-15 reps)", subExercises: [
+                { name: "Sentadilla + Press 5kg", time: 100, desc: "Sentadilla profunda • Press en subida • 10-12 reps • Pausa 2s arriba" },
+                { name: "Clean + Press 5kg", time: 100, desc: "Levantada explosiva • Press desde hombros • 10-12 reps • Control en press" },
+                { name: "Peso muerto 5kg", time: 100, desc: "Peso muerto completo controlado • 12-15 reps • Pausa 1s arriba" }
+            ]},
+            { id: "cd",  title: "Cool-down",       duration: 600, type: "cooldown", exercises: "Caminata lenta de recuperación (200s) • Estiramientos profundos pectorales y hombros (300s) • Respiración controlada (100s)", subExercises: [
+                { name: "Caminata lenta de recuperación", time: 200, desc: "Paseo lento para bajar cardio • Respira profundamente • Recupera frecuencia cardíaca" },
+                { name: "Estiramientos pectorales y hombros", time: 300, desc: "Pectorales, deltoides, trapecios • Mantén 20-30s cada estiramiento • Amplitud completa" },
+                { name: "Respiración controlada", time: 100, desc: "Inhalaciones profundas • Exhala lentamente • Relaja cuerpo y mente" }
+            ]}
         ]},
         3: { name: "Equilibrado", blocks: [
-            { id: "w",   title: "Activación",     duration: 300, type: "warmup",   exercises: "Golpes 1kg • Rodillas • Movilidad" },
-            { id: "c1q", title: "Ciclo 1 Quema",  duration: 420, type: "cardio",   exercises: "Push+Squat • Lateral raise • Punch" },
-            { id: "c1f", title: "Ciclo 1 Fuerza", duration: 180, type: "strength", exercises: "Squat+Overhead Press 5kg" },
-            { id: "c2q", title: "Ciclo 2 Quema",  duration: 420, type: "cardio",   exercises: "Remo+Zancada • Lateral lunge+Raise • Golpes" },
-            { id: "c2f", title: "Ciclo 2 Fuerza", duration: 180, type: "strength", exercises: "Zancada+Remo 5kg" },
-            { id: "c3q", title: "Ciclo 3 Quema",  duration: 420, type: "cardio",   exercises: "Hip thrust • Deadlift+Punch • Reverse lunge" },
-            { id: "c3f", title: "Ciclo 3 Fuerza", duration: 180, type: "strength", exercises: "Peso muerto rumano+Fila 5kg" },
-            { id: "c4q", title: "Ciclo 4 Quema",  duration: 420, type: "cardio",   exercises: "Plank+Golpes • Dead bug • Pallof press" },
-            { id: "c4f", title: "Ciclo 4 Fuerza", duration: 180, type: "strength", exercises: "Anti-rotation Press+Lunge 5kg" },
-            { id: "c5q", title: "Ciclo 5 Quema",  duration: 300, type: "cardio",   exercises: "Sent • Punch • Lunge walking" },
-            { id: "c5f", title: "Ciclo 5 Fuerza", duration: 300, type: "strength", exercises: "Sent goblet • Remo • Combos débiles" },
-            { id: "cd",  title: "Cool-down",       duration: 600, type: "cooldown", exercises: "Caminata • Stretching • Respiración" }
+            { id: "w",   title: "Activación",     duration: 300, type: "warmup",   exercises: "Golpes con mancuerna 1kg ritmo moderado-rápido (35 puños) • Saltar levantando rodillas alternadas (35-40 reps) • Movilidad completa", subExercises: [
+                { name: "Golpes con mancuerna 1kg", time: 60, desc: "Puños ritmo moderado-rápido • 35 puños • Control + velocidad" },
+                { name: "Saltar levantando rodillas", time: 60, desc: "Rodillas hacia el pecho alternadas • Ritmo constante • 35-40 reps" },
+                { name: "Movilidad completa", time: 60, desc: "Rotaciones cadera, hombro hacia atrás, cuello, tobillos • Completo" },
+                { name: "Golpes moderado-rápido repeat", time: 60, desc: "Puños ritmo moderado-rápido • 35 puños" },
+                { name: "Saltar rodillas alternadas repeat", time: 60, desc: "Rodillas al pecho • Ritmo constante • 35-40 reps" }
+            ]},
+            { id: "c1q", title: "Ciclo 1 Quema",  duration: 420, type: "cardio",   exercises: "Empuje intenso 1kg + Sentadilla rápida (20-25 reps) • Elevación lateral 1kg (45-50 reps) • Puños combinados 1kg (50-60 puños)", subExercises: [
+                { name: "Empuje intenso 1kg + Sentadilla", time: 90, desc: "Push intenso • Baja a sentadilla rápida • 20-25 reps" },
+                { name: "Elevación lateral de brazos 1kg", time: 90, desc: "Brazos hacia los lados • Movimiento rápido • 45-50 reps" },
+                { name: "Puños combinados 1kg", time: 90, desc: "Directos + cruzados + ganchos • 50-60 puños • Ritmo elevado" },
+                { name: "Descanso/Transición", time: 150, desc: "Caminata suave, recuperación cardíaca" }
+            ]},
+            { id: "c1f", title: "Ciclo 1 Fuerza", duration: 180, type: "strength", exercises: "Sentadilla goblet 5kg + Press arriba (12-15 reps)", subExercises: [
+                { name: "Goblet Squat + Press 5kg", time: 180, desc: "Sentadilla profunda controlada • Press arriba • 12-15 reps • Pausa 2s arriba" }
+            ]},
+            { id: "c2q", title: "Ciclo 2 Quema",  duration: 420, type: "cardio",   exercises: "Fila 1kg + Zancada (20-25 reps) • Zancada lateral + Elevación lateral 1kg (20-25 reps) • Puños rápidos 1kg (60-70 puños)", subExercises: [
+                { name: "Fila 1kg + Zancada", time: 90, desc: "Fila controlada • Zancada alternada • 20-25 reps" },
+                { name: "Zancada lateral + Elevación lateral 1kg", time: 90, desc: "Paso lateral • Elevar brazo al lateral • 20-25 reps" },
+                { name: "Puños rápidos 1kg", time: 90, desc: "Puños directos rápidos • 60-70 puños • Velocidad constante" },
+                { name: "Descanso/Transición", time: 150, desc: "Caminata suave, recuperación" }
+            ]},
+            { id: "c2f", title: "Ciclo 2 Fuerza", duration: 180, type: "strength", exercises: "Zancada profunda 5kg + Fila (10-12 reps)", subExercises: [
+                { name: "Zancada profunda + Fila 5kg", time: 180, desc: "Zancada profunda alternada • Fila bilateral • 10-12 reps • Pausa 2s en fila" }
+            ]},
+            { id: "c3q", title: "Ciclo 3 Quema",  duration: 420, type: "cardio",   exercises: "Hip thrust rápido (30-35 reps) • Deadlift 1kg + Puño frontal (25-30 reps) • Zancada inversa dinámica (20-25 zancadas)", subExercises: [
+                { name: "Hip thrust rápido", time: 90, desc: "Glúteos explosivos sin peso • 30-35 reps" },
+                { name: "Deadlift 1kg + Puño frontal", time: 90, desc: "Levantada controlada • Puños directos • 25-30 reps" },
+                { name: "Zancada inversa dinámica", time: 90, desc: "Paso hacia atrás explosivo • 20-25 zancadas" },
+                { name: "Descanso/Transición", time: 150, desc: "Caminata suave, recuperación" }
+            ]},
+            { id: "c3f", title: "Ciclo 3 Fuerza", duration: 180, type: "strength", exercises: "Peso muerto rumano 5kg + Fila bilateral (10-12 reps)", subExercises: [
+                { name: "RDL + Fila bilateral 5kg", time: 180, desc: "Peso muerto rumano controlado • Fila bilateral • 10-12 reps • Pausa 2s en fila" }
+            ]},
+            { id: "c4q", title: "Ciclo 4 Quema",  duration: 420, type: "cardio",   exercises: "Plank + Puños alternos 1kg (20-25 puños) • Dead bug cruzado (20-25 reps) • Pallof press 1kg (15-20 reps)", subExercises: [
+                { name: "Plank + Puños alternos 1kg", time: 90, desc: "Posición plancha • Puños alternos controlados • 20-25 puños cada lado" },
+                { name: "Dead bug cruzado", time: 90, desc: "Acostado, brazos + piernas opuestas • 20-25 reps" },
+                { name: "Pallof press 1kg anti-rotación", time: 90, desc: "De pie • Brazos extendidos laterales • 15-20 reps cada lado" },
+                { name: "Descanso/Transición", time: 150, desc: "Caminata suave, recuperación" }
+            ]},
+            { id: "c4f", title: "Ciclo 4 Fuerza", duration: 180, type: "strength", exercises: "Press anti-rotación lateral 5kg + Zancada (12 reps totales)", subExercises: [
+                { name: "Pallof press lateral 5kg + Zancada", time: 180, desc: "De pie, brazos extendidos • Zancada lateral al presionar • 12 reps totales (6 cada lado)" }
+            ]},
+            { id: "c5q", title: "Ciclo 5 Quema",  duration: 300, type: "cardio",   exercises: "Sentadilla rápida intenso (45-50 reps) • Puños combinados 1kg (70-80 puños) • Zancada caminando rápida (20-25 zancadas)", subExercises: [
+                { name: "Sentadilla rápida intenso", time: 100, desc: "Sin peso, máxima velocidad • 45-50 reps" },
+                { name: "Puños combinados velocidad 1kg", time: 100, desc: "Directos + cruzados + ganchos • 70-80 puños" },
+                { name: "Zancada caminando rápida", time: 100, desc: "Pasos largos rápidos • 20-25 zancadas" }
+            ]},
+            { id: "c5f", title: "Ciclo 5 Fuerza", duration: 300, type: "strength", exercises: "Sentadilla goblet 5kg (12-15 reps) • Fila bilateral 5kg (12-15 reps) • Ejercicio débil 5kg", subExercises: [
+                { name: "Sentadilla goblet 5kg", time: 100, desc: "Sentadilla profunda controlada • 12-15 reps • Pausa 2s abajo" },
+                { name: "Fila bilateral 5kg", time: 100, desc: "Fila bilateral con apriete fuerte • 12-15 reps • Pausa 2s arriba" },
+                { name: "Ejercicio débil 5kg", time: 100, desc: "Tu punto débil • Movimiento controlado • 10-12 reps" }
+            ]},
+            { id: "cd",  title: "Cool-down",       duration: 600, type: "cooldown", exercises: "Caminata lenta (200s) • Estiramientos profundos (300s) • Respiración controlada (100s)", subExercises: [
+                { name: "Caminata lenta de recuperación", time: 200, desc: "Paseo lento para normalizar cardio" },
+                { name: "Estiramientos profundos", time: 300, desc: "Piernas, caderas, espalda baja • 20-30s cada estiramiento" },
+                { name: "Respiración controlada", time: 100, desc: "Inhalaciones profundas • Exhala lentamente • Relaja" }
+            ]}
         ]},
         4: { name: "Control + Técnica", blocks: [
-            { id: "w",   title: "Activación",     duration: 300, type: "warmup",   exercises: "Golpes suave 1kg • Rodillas suave • Movilidad" },
-            { id: "c1q", title: "Ciclo 1 Quema",  duration: 420, type: "cardio",   exercises: "Sent controlada • Lateral lunge • Stepping" },
-            { id: "c1f", title: "Ciclo 1 Fuerza", duration: 180, type: "strength", exercises: "Goblet Squat ultra lento 5kg" },
-            { id: "c2q", title: "Ciclo 2 Quema",  duration: 420, type: "cardio",   exercises: "Deadlift suave • Hip thrust • Reverse lunge" },
-            { id: "c2f", title: "Ciclo 2 Fuerza", duration: 180, type: "strength", exercises: "Peso muerto TEMPO 5kg" },
-            { id: "c3q", title: "Ciclo 3 Quema",  duration: 420, type: "cardio",   exercises: "Press suave • Lateral raise • Golpe suave" },
-            { id: "c3f", title: "Ciclo 3 Fuerza", duration: 180, type: "strength", exercises: "Press overhead ESTRICTO 5kg" },
-            { id: "c4q", title: "Ciclo 4 Quema",  duration: 420, type: "cardio",   exercises: "Remo suave • Plank • Tracción suave" },
-            { id: "c4f", title: "Ciclo 4 Fuerza", duration: 180, type: "strength", exercises: "Remo bilateral CON APRIETE 5kg" },
-            { id: "c5q", title: "Ciclo 5 Quema",  duration: 300, type: "cardio",   exercises: "Sent • Punch • Lunge" },
-            { id: "c5f", title: "Ciclo 5 Fuerza", duration: 300, type: "strength", exercises: "Movimientos débiles CONTROL PURO 5kg" },
-            { id: "cd",  title: "Cool-down",       duration: 600, type: "cooldown", exercises: "Caminata • Stretching • Respiración" }
+            { id: "w",   title: "Activación",     duration: 300, type: "warmup",   exercises: "Golpes suave 1kg muy controlado (20-25 puños) • Saltar rodillas suave (20-25 reps) • Movilidad articular lenta", subExercises: [
+                { name: "Golpes suave 1kg muy controlado", time: 60, desc: "Puños lentos y precisos • 20-25 puños • Forma perfecta" },
+                { name: "Saltar rodillas suave controlado", time: 60, desc: "Rodillas al pecho • Lento y controlado • 20-25 reps" },
+                { name: "Movilidad articular lenta", time: 60, desc: "Cuello, hombro, cadera, tobillo • Lento y controlado" },
+                { name: "Golpes suave repeat", time: 60, desc: "Puños lentos precisos • 20-25 puños" },
+                { name: "Saltar rodillas suave repeat", time: 60, desc: "Rodillas al pecho • Lento • 20-25 reps" }
+            ]},
+            { id: "c1q", title: "Ciclo 1 Quema",  duration: 420, type: "cardio",   exercises: "Sentadilla controlada muy lenta (10-12 reps) • Zancada lateral controlada (15-18 reps) • Pasos laterales suaves (25-30 pasos)", subExercises: [
+                { name: "Sentadilla muy lenta", time: 90, desc: "Sin peso • Muy controlada • Pausa 2s abajo • 10-12 reps" },
+                { name: "Zancada lateral controlada", time: 90, desc: "Paso lateral lento • Baja profunda • 15-18 reps" },
+                { name: "Pasos laterales suaves", time: 90, desc: "Pasos laterales lento • 25-30 pasos • Fluido" },
+                { name: "Descanso/Transición", time: 150, desc: "Caminata lenta, recuperación suave" }
+            ]},
+            { id: "c1f", title: "Ciclo 1 Fuerza", duration: 180, type: "strength", exercises: "Sentadilla goblet ultra lenta 5kg (tempo 5s bajada, 6-8 reps)", subExercises: [
+                { name: "Goblet Squat ultra lenta 5kg", time: 180, desc: "5s bajada • 2s pausa abajo • 2s subida • 6-8 reps • FORMA PERFECTA" }
+            ]},
+            { id: "c2q", title: "Ciclo 2 Quema",  duration: 420, type: "cardio",   exercises: "Peso muerto suave sin peso (15-18 reps) • Hip thrust muy controlado (15-18 reps) • Zancada inversa lenta (15-18 zancadas)", subExercises: [
+                { name: "Peso muerto suave sin peso", time: 90, desc: "Movimiento controlado • Pausa 1s arriba • 15-18 reps" },
+                { name: "Hip thrust muy controlado", time: 90, desc: "Glúteos sin explosión • Pausa 2s arriba • 15-18 reps" },
+                { name: "Zancada inversa lenta", time: 90, desc: "Paso hacia atrás lento • 15-18 zancadas • Forma impecable" },
+                { name: "Descanso/Transición", time: 150, desc: "Caminata lenta suave" }
+            ]},
+            { id: "c2f", title: "Ciclo 2 Fuerza", duration: 180, type: "strength", exercises: "Peso muerto TEMPO 5kg (4s bajada, 2s pausa, 2s subida, 6-8 reps)", subExercises: [
+                { name: "Peso muerto TEMPO 5kg", time: 180, desc: "4s bajada • 2s pausa abajo • 2s subida • 6-8 reps • Forma estricta" }
+            ]},
+            { id: "c3q", title: "Ciclo 3 Quema",  duration: 420, type: "cardio",   exercises: "Press suave 1kg (15-18 reps) • Elevación lateral lenta 1kg (18-20 reps) • Puños suaves 1kg (20-25 puños)", subExercises: [
+                { name: "Press suave 1kg muy controlado", time: 90, desc: "Movimiento lento • Pausa 1s arriba • 15-18 reps" },
+                { name: "Elevación lateral lenta 1kg", time: 90, desc: "Brazos hacia los lados • Lento y preciso • 18-20 reps" },
+                { name: "Puños suaves controlados 1kg", time: 90, desc: "Puños lentos y precisos • 20-25 puños" },
+                { name: "Descanso/Transición", time: 150, desc: "Caminata lenta, recuperación" }
+            ]},
+            { id: "c3f", title: "Ciclo 3 Fuerza", duration: 180, type: "strength", exercises: "Press overhead ESTRICTO 5kg (8-10 reps lento)", subExercises: [
+                { name: "Press overhead ESTRICTO 5kg", time: 180, desc: "Sin balanceo • Núcleo tenso • 8-10 reps • Tempo lento" }
+            ]},
+            { id: "c4q", title: "Ciclo 4 Quema",  duration: 420, type: "cardio",   exercises: "Fila suave 1kg (18-20 reps) • Plank isométrico (60-90s) • Tracción suave (8-10 reps)", subExercises: [
+                { name: "Fila suave 1kg controlada", time: 90, desc: "Movimiento controlado • Pausa 2s arriba • 18-20 reps" },
+                { name: "Plank isométrico largo", time: 90, desc: "Sin movimiento • Núcleo tenso • 60-90s" },
+                { name: "Tracción suave controlada", time: 90, desc: "Movimiento lento • Máximo control • 8-10 reps" },
+                { name: "Descanso/Transición", time: 150, desc: "Caminata lenta suave" }
+            ]},
+            { id: "c4f", title: "Ciclo 4 Fuerza", duration: 180, type: "strength", exercises: "Fila bilateral 5kg CON APRIETE omóplatos (2s pausa, 10-12 reps)", subExercises: [
+                { name: "Fila bilateral 5kg con apriete", time: 180, desc: "2s pausa arriba apretando omóplatos • 10-12 reps • Control máximo" }
+            ]},
+            { id: "c5q", title: "Ciclo 5 Quema",  duration: 300, type: "cardio",   exercises: "Sentadilla controlada (12-15 reps) • Puños precisos 1kg (25-30 puños) • Zancada caminando controlada (12-15 zancadas)", subExercises: [
+                { name: "Sentadilla controlada", time: 100, desc: "Forma perfecta • 12-15 reps • Pausa 1s abajo" },
+                { name: "Puños precisos 1kg", time: 100, desc: "Puños lentos y precisos • 25-30 puños" },
+                { name: "Zancada caminando controlada", time: 100, desc: "Pasos largos controlados • 12-15 zancadas" }
+            ]},
+            { id: "c5f", title: "Ciclo 5 Fuerza", duration: 300, type: "strength", exercises: "Sentadilla goblet controlada 5kg (8-10 reps) • Fila bilateral 5kg (10-12 reps) • Ejercicio débil CONTROL PURO 5kg", subExercises: [
+                { name: "Sentadilla goblet controlada 5kg", time: 100, desc: "8-10 reps • Pausa 2s abajo • Forma perfecta" },
+                { name: "Fila bilateral controlada 5kg", time: 100, desc: "10-12 reps • Pausa 2s arriba apretando • Forma estricta" },
+                { name: "Ejercicio débil CONTROL PURO 5kg", time: 100, desc: "Tu punto débil • Forma perfecta • 8-10 reps • MÁXIMO CONTROL" }
+            ]},
+            { id: "cd",  title: "Cool-down",       duration: 600, type: "cooldown", exercises: "Caminata muy lenta (200s) • Estiramientos máxima amplitud (300s) • Respiración meditativa (100s)", subExercises: [
+                { name: "Caminata muy lenta profunda", time: 200, desc: "Paseo muy lento • Recuperación profunda" },
+                { name: "Estiramientos profundos máxima amplitud", time: 300, desc: "Piernas, caderas, espalda • 20-30s cada estiramiento • Máxima amplitud" },
+                { name: "Respiración controlada meditativa", time: 100, desc: "Inhalaciones de 4s • Exhala de 6s • Relaja completamente" }
+            ]}
         ]}
     };
 
-    // ── ESTADO ────────────────────────────────────────────────
+    // ── STATE ─────────────────────────────────────────────────
     let currentRoutine = 1;
     let selectedDate = new Date();
     let workoutData = {};
@@ -334,8 +828,9 @@
     let totalInterval = null;
     let fastingInterval = null;
     let saveTimeout = null;
+    let hmMonth = new Date(); // heatmap month
 
-    // ── SUPABASE ──────────────────────────────────────────────
+    // ── SUPABASE SYNC ─────────────────────────────────────────
     async function loadFromSupabase() {
         setSyncStatus('syncing', 'cargando...');
         try {
@@ -394,41 +889,39 @@
         saveTimeout = setTimeout(saveToSupabase, 1500);
     }
 
-    // ── CALENDARIO ────────────────────────────────────────────
+    // ── HELPERS ───────────────────────────────────────────────
     function getDateStr(d) {
-        return d.getFullYear() + '-' +
-               String(d.getMonth() + 1).padStart(2, '0') + '-' +
-               String(d.getDate()).padStart(2, '0');
+        return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
     }
+    const weekdays = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+    const monthNames = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
 
+    // ── CALENDAR ──────────────────────────────────────────────
     function renderCal() {
         const c = document.getElementById('calendar-week');
         c.innerHTML = '';
         const today = new Date();
         const todayStr = getDateStr(today);
-        const selStr   = getDateStr(selectedDate);
-
+        const selStr = getDateStr(selectedDate);
         for (let i = 6; i >= 0; i--) {
-            const d  = new Date(today.getFullYear(), today.getMonth(), today.getDate() - i);
+            const d = new Date(today.getFullYear(), today.getMonth(), today.getDate() - i);
             const ds = getDateStr(d);
             const btn = document.createElement('button');
-            btn.className = 'calendar-day';
-            btn.textContent = d.getDate();
+            btn.className = 'cal-day';
             if (ds === todayStr) btn.classList.add('today');
-            if (ds === selStr)   btn.classList.add('selected');
+            if (ds === selStr) btn.classList.add('selected');
             const dd = workoutData[ds];
-            if (dd && dd.completed) btn.classList.add('workout-done');
-            if (dd && dd.fasting)   btn.classList.add('fasting-done');
+            let dotsHTML = '';
+            if (dd && dd.completed) dotsHTML += '<div class="cal-dot workout"></div>';
+            if (dd && dd.fasting) dotsHTML += '<div class="cal-dot fasting"></div>';
+            btn.innerHTML = `<span class="cal-weekday">${weekdays[d.getDay()]}</span><span class="cal-num">${d.getDate()}</span><div class="cal-dots">${dotsHTML}</div>`;
             btn.dataset.ds = ds;
-            btn.onclick = function() {
-                const p = this.dataset.ds.split('-');
-                changeDate(new Date(+p[0], +p[1] - 1, +p[2]));
-            };
+            btn.onclick = function() { const p = this.dataset.ds.split('-'); changeDate(new Date(+p[0], +p[1]-1, +p[2])); };
             c.appendChild(btn);
         }
     }
 
-    // ── RUTINAS ───────────────────────────────────────────────
+    // ── ROUTINES ──────────────────────────────────────────────
     function usedThisWeek(routineId) {
         for (let i = 0; i < 7; i++) {
             const d = new Date(); d.setDate(d.getDate() - i);
@@ -445,8 +938,8 @@
             const rid = parseInt(id);
             const used = usedThisWeek(rid);
             const btn = document.createElement('button');
-            btn.className = 'routine-btn' + (rid === currentRoutine ? ' active' : '');
-            btn.innerHTML = `Op.${id}${used ? ' <span class="routine-check">✓</span>' : ''}`;
+            btn.className = 'routine-tab' + (rid === currentRoutine ? ' active' : '');
+            btn.innerHTML = `Op.${id}${used ? ' <span class="r-check">✓</span>' : ''}`;
             btn.onclick = () => { currentRoutine = rid; renderRoutine(); reset(); renderTL(); };
             r.appendChild(btn);
         });
@@ -458,32 +951,29 @@
         t.innerHTML = '';
         routineData[currentRoutine].blocks.forEach((b, i) => {
             const el = document.createElement('div');
-            el.className = 'timeline-block' + (wstate.done.has(b.id) ? ' completed' : '');
-            const m = Math.floor(b.duration / 60), s = b.duration % 60;
-            const icon = b.type === 'cardio' ? '🔥' : b.type === 'strength' ? '💪' : b.type === 'warmup' ? '↻' : '✓';
-            el.innerHTML = `
-                <div class="block-row">
-                    <div class="block-info">
-                        <div class="block-title">${b.title}</div>
-                        <div class="block-exercises">${b.exercises}</div>
-                    </div>
-                    <div class="block-timer">
-                        <div class="timer-main" id="tmr${i}">${m}:${String(s).padStart(2,'0')}</div>
-                        <div class="timer-type">${icon}</div>
-                    </div>
-                </div>
-                <button class="btn-mark" id="mark${i}" onclick="togDone(${i},'${b.id}')">
-                    <div class="btn-mark-fill" id="prg${i}"></div>
-                    <span id="marklbl${i}">MARCAR</span>
-                </button>`;
+            el.className = 'tl-block' + (wstate.done.has(b.id) ? ' completed' : '');
+            const m = Math.floor(b.duration/60), s = b.duration%60;
+            const icon = b.type==='cardio'?'🔥':b.type==='strength'?'💪':b.type==='warmup'?'↻':'✓';
+            let subHTML = '';
+            if (b.subExercises && b.subExercises.length > 0) {
+                subHTML = '<div class="sub-list">';
+                b.subExercises.forEach((sub, j) => {
+                    const sm = Math.floor(sub.time/60), ss = sub.time%60;
+                    subHTML += `<div class="sub-item"><div class="sub-item-row"><div style="flex:1;min-width:0;"><div class="sub-name">${j+1}. ${sub.name}</div><div class="sub-desc">${sub.desc}</div></div><div class="sub-time" data-time="${sub.time}">${sm}:${String(ss).padStart(2,'0')}</div></div><div class="sub-bar"><div class="sub-bar-fill" id="subprg${i}-${j}"></div></div></div>`;
+                });
+                subHTML += '</div>';
+            }
+            el.innerHTML = `<div class="tl-row"><div class="tl-info"><div class="tl-title">${b.title}</div><div class="tl-exercises">${b.exercises}</div></div><div class="tl-timer-wrap"><div class="tl-timer" id="tmr${i}">${m}:${String(s).padStart(2,'0')}</div><div class="tl-type">${icon}</div></div></div>${subHTML}<button class="btn-mark" id="mark${i}" onclick="togDone(${i},'${b.id}')"><div class="btn-mark-fill" id="prg${i}"></div><span id="marklbl${i}">MARCAR</span></button>`;
+            if (b.subExercises && b.subExercises.length > 0) {
+                el.querySelector('.tl-row').onclick = (e) => { if (e.target.tagName !== 'BUTTON') el.classList.toggle('expanded'); };
+            }
             t.appendChild(el);
         });
     }
 
-    // ── FECHA / STATS ─────────────────────────────────────────
+    // ── DATE / STATS ──────────────────────────────────────────
     function updateDate() {
-        document.getElementById('current-date').textContent =
-            selectedDate.toLocaleDateString('es-ES', { weekday: 'short', month: 'short', day: 'numeric' }).toUpperCase();
+        document.getElementById('current-date').textContent = selectedDate.toLocaleDateString('es-ES', { weekday: 'short', month: 'short', day: 'numeric' }).toUpperCase();
     }
 
     function updateStats() {
@@ -496,25 +986,23 @@
             if (i < 7 && workoutData[ds]) week++;
         }
         document.getElementById('stat-streak').textContent = streak;
-        document.getElementById('stat-total').textContent  = Object.keys(workoutData).length;
-        document.getElementById('stat-week').textContent   = week;
-        document.getElementById('stat-today').textContent  = workoutData[todayStr] ? `D${workoutData[todayStr].r}` : '—';
+        document.getElementById('stat-total').textContent = Object.keys(workoutData).length;
+        document.getElementById('stat-week').textContent = week;
+        document.getElementById('stat-today').textContent = workoutData[todayStr] ? `D${workoutData[todayStr].r}` : '—';
     }
 
-    // ── AYUNO ─────────────────────────────────────────────────
+    // ── FASTING ───────────────────────────────────────────────
     function renderFastingTicks() {
         const container = document.getElementById('fasting-ticks');
         container.innerHTML = '';
-        // Mostrar ticks para etapas desde la 2ª en adelante (excluir hora 0)
         fastingStages.slice(1).forEach(s => {
             const pct = (s.hours / FASTING_MAX_H) * 100;
             const tick = document.createElement('div');
-            tick.className = 'fasting-tick';
+            tick.className = 'fasting-marker';
             tick.id = `ftick-${s.hours}`;
             tick.style.left = pct + '%';
-            const isLast = s.hours === FASTING_MAX_H;
-            if (isLast) tick.style.transform = 'translateX(-90%)';
-            tick.innerHTML = `<div class="fasting-tick-line"></div><div class="fasting-tick-label">${s.hours}h<br>${s.name}</div>`;
+            if (s.hours === FASTING_MAX_H) tick.style.transform = 'translateX(-90%)';
+            tick.innerHTML = `<div class="fasting-marker-line"></div><div class="fasting-marker-label">${s.hours}h<br>${s.name}</div>`;
             container.appendChild(tick);
         });
     }
@@ -524,16 +1012,13 @@
         const h = Math.floor(total / 3600);
         const m = Math.floor((total % 3600) / 60);
         const s = total % 60;
-        document.getElementById('fasting-time').textContent =
-            `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+        document.getElementById('fasting-time').textContent = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
 
-        // Meta: hora de inicio real (restando offset) 
         const metaEl = document.getElementById('fasting-meta');
         if (metaEl) {
             const lines = [];
             if (fastingState.startedAt) {
                 const start = new Date(fastingState.startedAt);
-                // Hora de inicio real = hora en que se pulsó Iniciar - offset aplicado
                 const realStart = new Date(start.getTime() - (fastingState.offset * 3600000));
                 lines.push('Inicio real: ' + realStart.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }));
                 if (fastingState.offset > 0) {
@@ -545,7 +1030,6 @@
             metaEl.textContent = lines.join('  ·  ');
         }
 
-        // Etapa actual
         let currentStage = fastingStages[0];
         for (let i = 0; i < fastingStages.length; i++) {
             if (h >= fastingStages[i].hours) currentStage = fastingStages[i];
@@ -553,18 +1037,14 @@
         document.getElementById('fasting-stage-name').textContent = currentStage.name;
         document.getElementById('fasting-stage-desc').textContent = currentStage.desc;
 
-        // Barra de progreso
         const pct = Math.min((h / FASTING_MAX_H) * 100, 100);
         document.getElementById('fasting-fill').style.width = pct + '%';
 
-        // Ticks
-        fastingStages.slice(1).forEach(s => {
-            const tick = document.getElementById(`ftick-${s.hours}`);
+        fastingStages.slice(1).forEach(st => {
+            const tick = document.getElementById(`ftick-${st.hours}`);
             if (!tick) return;
-            const reached = h >= s.hours;
-            const isCurrent = currentStage.hours === s.hours;
-            tick.classList.toggle('reached', reached);
-            tick.classList.toggle('current', isCurrent);
+            tick.classList.toggle('reached', h >= st.hours);
+            tick.classList.toggle('current', currentStage.hours === st.hours);
         });
     }
 
@@ -578,7 +1058,9 @@
     document.getElementById('btn-fasting-start').onclick = () => {
         fastingState.started = !fastingState.started;
         const btn = document.getElementById('btn-fasting-start');
-        btn.textContent = fastingState.started ? 'Pausar' : 'Iniciar';
+        btn.innerHTML = fastingState.started
+            ? '<span class="material-symbols-outlined" style="font-size:14px;">pause</span> Pausar'
+            : '<span class="material-symbols-outlined" style="font-size:14px;">play_arrow</span> Iniciar';
         btn.classList.toggle('active', fastingState.started);
         if (fastingState.started) fastingState.startedAt = new Date().toISOString();
         debouncedSave();
@@ -594,37 +1076,30 @@
             const h = Math.floor(f.totalSeconds / 3600);
             const m = Math.floor((f.totalSeconds % 3600) / 60);
             logEl.textContent = `✓ Ayuno cerrado: ${String(h).padStart(2,'0')}h ${String(m).padStart(2,'0')}m · ${f.closedAt}`;
-        } else {
-            logEl.textContent = '';
-        }
+        } else { logEl.textContent = ''; }
     }
 
     document.getElementById('btn-fasting-close').onclick = () => {
         const total = fastingState.seconds + (fastingState.offset * 3600);
-        if (total < 60) return; // ignorar si es menos de 1 min
-        // Pausar
+        if (total < 60) return;
         fastingState.started = false;
         const startBtn = document.getElementById('btn-fasting-start');
-        startBtn.textContent = 'Iniciar';
+        startBtn.innerHTML = '<span class="material-symbols-outlined" style="font-size:14px;">play_arrow</span> Iniciar';
         startBtn.classList.remove('active');
-        // Registrar en workoutData del día actual
         const ds = getDateStr(new Date());
         const now = new Date();
         const closedAt = now.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
         if (!workoutData[ds]) workoutData[ds] = {};
-        workoutData[ds].fasting = {
-            totalSeconds: Math.floor(total),
-            closedAt: closedAt,
-            date: ds
-        };
+        workoutData[ds].fasting = { totalSeconds: Math.floor(total), closedAt: closedAt, date: ds };
         updateFastingLog();
+        renderCal();
         debouncedSave();
     };
 
     document.getElementById('btn-fasting-reset').onclick = () => {
         fastingState = { seconds: 0, offset: 0, started: false, startedAt: null };
         const btn = document.getElementById('btn-fasting-start');
-        btn.textContent = 'Iniciar';
+        btn.innerHTML = '<span class="material-symbols-outlined" style="font-size:14px;">play_arrow</span> Iniciar';
         btn.classList.remove('active');
         document.getElementById('offset-h').value = 0;
         document.getElementById('offset-m').value = 0;
@@ -644,10 +1119,9 @@
     window.togDone = function(idx, id) {
         if (wstate.done.has(id)) wstate.done.delete(id); else wstate.done.add(id);
         updateMarkBtn(idx, id);
-        const block = document.querySelectorAll('.timeline-block')[idx];
-        if (wstate.done.has(id)) { block.classList.add('completed'); }
-        else { block.classList.remove('completed'); }
-        // Guardar siempre el estado de bloques del día seleccionado
+        const block = document.querySelectorAll('.tl-block')[idx];
+        if (wstate.done.has(id)) block.classList.add('completed');
+        else block.classList.remove('completed');
         const ds = getDateStr(selectedDate);
         const doneArr = Array.from(wstate.done);
         const allDone = routineData[currentRoutine].blocks.every(b => wstate.done.has(b.id));
@@ -656,14 +1130,14 @@
     };
 
     function updateMarkBtn(idx, id) {
-        const btn  = document.getElementById(`mark${idx}`);
+        const btn = document.getElementById(`mark${idx}`);
         const fill = document.getElementById(`prg${idx}`);
-        const lbl  = document.getElementById(`marklbl${idx}`);
+        const lbl = document.getElementById(`marklbl${idx}`);
         if (!btn) return;
         const done = wstate.done.has(id);
         btn.classList.toggle('done', done);
         if (fill) fill.classList.toggle('done', done);
-        if (lbl)  lbl.textContent = done ? '✓ HECHO' : 'MARCAR';
+        if (lbl) lbl.textContent = done ? '✓ HECHO' : 'MARCAR';
     }
 
     function updateTotalTimer() {
@@ -682,20 +1156,55 @@
         const rt = routineData[currentRoutine];
         if (blockIdx >= rt.blocks.length) { meta.textContent = ''; return; }
         const b = rt.blocks[blockIdx];
-        const icon = b.type === 'cardio' ? '🔥' : b.type === 'strength' ? '💪' : b.type === 'warmup' ? '↻' : '✓';
+        const icon = b.type==='cardio'?'🔥':b.type==='strength'?'💪':b.type==='warmup'?'↻':'✓';
         const next = rt.blocks[blockIdx + 1];
-        meta.innerHTML = `<span class="accent">${icon} ${b.title}</span> · ${b.exercises}${next ? ` <span style="color:var(--text-secondary);opacity:0.6"> → siguiente: ${next.title}</span>` : ''}`;
+        meta.innerHTML = `<span class="wm-accent">${icon} ${b.title}</span> · ${b.exercises}${next ? ` <span style="color:var(--text-muted);opacity:0.6"> → siguiente: ${next.title}</span>` : ''}`;
+    }
+
+    function updateActiveHUD(blockIdx, subIdx, subRem, subTotal) {
+        const hud = document.getElementById('active-hud');
+        if (!hud) return;
+        const rt = routineData[currentRoutine];
+        if (blockIdx >= rt.blocks.length) { hud.classList.remove('visible'); return; }
+        const b = rt.blocks[blockIdx];
+        if (!b.subExercises || b.subExercises.length === 0) { hud.classList.remove('visible'); return; }
+        hud.classList.add('visible');
+        const sub = b.subExercises[subIdx];
+        if (!sub) return;
+        const icon = b.type==='cardio'?'🔥':b.type==='strength'?'💪':b.type==='warmup'?'↻':'✓';
+        document.getElementById('hud-block-label').innerHTML = `<span class="hud-step">${icon} ${b.title}</span> Sub ${subIdx+1}/${b.subExercises.length}`;
+        document.getElementById('hud-sub-name').textContent = sub.name;
+        document.getElementById('hud-sub-desc').textContent = sub.desc;
+        const sm = Math.floor(Math.max(0, subRem) / 60), ss = Math.max(0, subRem) % 60;
+        document.getElementById('hud-timer').textContent = `${String(sm).padStart(2,'0')}:${String(ss).padStart(2,'0')}`;
+        const pct = subTotal > 0 ? Math.min(((subTotal - subRem) / subTotal) * 100, 100) : 0;
+        document.getElementById('hud-bar-fill').style.width = pct + '%';
+        // Next sub
+        const nextEl = document.getElementById('hud-next');
+        if (subIdx + 1 < b.subExercises.length) {
+            nextEl.innerHTML = `Siguiente → <span>${b.subExercises[subIdx+1].name}</span>`;
+        } else {
+            const nextBlock = rt.blocks[blockIdx + 1];
+            nextEl.innerHTML = nextBlock ? `Siguiente bloque → <span>${nextBlock.title}</span>` : '<span>Último bloque</span>';
+        }
+    }
+
+    function hideActiveHUD() {
+        const hud = document.getElementById('active-hud');
+        if (hud) hud.classList.remove('visible');
     }
 
     function toggleWk() {
         wstate.started = !wstate.started;
         const btnW = document.getElementById('btn-start-workout');
-        btnW.textContent = wstate.started ? 'PAUSAR' : 'INICIAR';
-        btnW.classList.toggle('paused', wstate.started);
         if (wstate.started) {
+            btnW.innerHTML = '<span class="material-symbols-outlined" style="font-size:16px;">pause</span> Pausar';
+            btnW.classList.add('paused');
             totalInterval = setInterval(() => { totalSeconds++; updateTotalTimer(); }, 1000);
             startSeq();
         } else {
+            btnW.innerHTML = '<span class="material-symbols-outlined" style="font-size:16px;">play_arrow</span> Iniciar';
+            btnW.classList.remove('paused');
             clearInterval(totalInterval);
             stopSeq();
         }
@@ -705,42 +1214,120 @@
         const rt = routineData[currentRoutine];
         let idx = 0;
         updateWorkoutMeta(0);
+        const tlScroll = document.getElementById('timeline-scroll');
+        let scrollTimeout = null;
+        let userScrolling = false;
+        if (tlScroll) {
+            tlScroll.addEventListener('scroll', () => {
+                userScrolling = true;
+                if (scrollTimeout) clearTimeout(scrollTimeout);
+                scrollTimeout = setTimeout(() => { userScrolling = false; }, 5000);
+            });
+        }
         function next() {
             updateWorkoutMeta(idx);
             if (!wstate.started || idx >= rt.blocks.length) {
                 wstate.started = false;
                 clearInterval(totalInterval);
                 const btnW = document.getElementById('btn-start-workout');
-                btnW.textContent = '✓ COMPLETADO';
+                btnW.innerHTML = '<span class="material-symbols-outlined" style="font-size:16px;">check_circle</span> Completado';
                 btnW.classList.remove('paused');
                 btnW.classList.add('done');
                 const metaEl = document.getElementById('workout-meta');
                 if (metaEl) {
                     const th = Math.floor(totalSeconds/3600), tm = Math.floor((totalSeconds%3600)/60);
-                    metaEl.innerHTML = `<span class="accent">✓ Completado</span> · Tiempo total: ${th > 0 ? th+'h ' : ''}${tm}min`;
+                    metaEl.innerHTML = `<span class="wm-accent">✓ Completado</span> · Tiempo total: ${th > 0 ? th+'h ' : ''}${tm}min`;
                 }
+                hideActiveHUD();
                 const ds = getDateStr(selectedDate);
                 workoutData[ds] = { r: currentRoutine, done: Array.from(wstate.done), completed: true };
                 updateStats(); renderCal(); debouncedSave();
+                document.querySelectorAll('.tl-block').forEach(b => b.classList.remove('expanded'));
                 return;
             }
             const b = rt.blocks[idx];
+            const blk = document.querySelectorAll('.tl-block')[idx];
+            if (b.subExercises && b.subExercises.length > 0 && blk) blk.classList.add('expanded');
+            // Auto-scroll the timeline-scroll container to the active block
+            if (blk && tlScroll && !userScrolling) {
+                const blockTop = blk.offsetTop - tlScroll.offsetTop;
+                tlScroll.scrollTo({ top: blockTop - 8, behavior: 'smooth' });
+            }
             let rem = b.duration;
             const te = document.getElementById(`tmr${idx}`);
             const pe = document.getElementById(`prg${idx}`);
             if (te) { te.classList.add('timer-active'); te.textContent = `${Math.floor(rem/60)}:${String(rem%60).padStart(2,'0')}`; }
+            function updateSubTimers() {
+                if (b.subExercises && b.subExercises.length > 0 && blk) {
+                    let timeElapsed = b.duration - rem;
+                    let currentSubIdx = 0;
+                    let subTimeAccum = 0;
+                    for (let i = 0; i < b.subExercises.length; i++) {
+                        if (timeElapsed < subTimeAccum + b.subExercises[i].time) { currentSubIdx = i; break; }
+                        subTimeAccum += b.subExercises[i].time;
+                    }
+                    const subExercises = blk.querySelectorAll('.sub-item');
+                    let subAccum = 0;
+                    subExercises.forEach((el, i) => {
+                        el.style.borderLeftColor = i === currentSubIdx ? 'var(--green)' : 'var(--accent)';
+                        el.style.background = i === currentSubIdx ? 'rgba(107,255,143,0.06)' : 'rgba(14,14,16,0.6)';
+                        // Auto-scroll scoped to timeline-scroll only
+                        if (i === currentSubIdx && !userScrolling && tlScroll) {
+                            const elTop = el.getBoundingClientRect().top;
+                            const containerTop = tlScroll.getBoundingClientRect().top;
+                            const containerBottom = tlScroll.getBoundingClientRect().bottom;
+                            if (elTop < containerTop || elTop > containerBottom - 60) {
+                                const scrollTarget = tlScroll.scrollTop + (elTop - containerTop) - 40;
+                                tlScroll.scrollTo({ top: scrollTarget, behavior: 'smooth' });
+                            }
+                        }
+                        const fillBar = document.getElementById(`subprg${idx}-${i}`);
+                        if (fillBar) {
+                            if (i < currentSubIdx) fillBar.style.width = '100%';
+                            else if (i === currentSubIdx) {
+                                const subTimeElapsed = timeElapsed - subAccum;
+                                fillBar.style.width = Math.min((subTimeElapsed / b.subExercises[i].time) * 100, 100) + '%';
+                            } else fillBar.style.width = '0%';
+                        }
+                        subAccum += b.subExercises[i].time;
+                    });
+                    const subTime = b.subExercises[currentSubIdx].time;
+                    const subElapsed = timeElapsed - (subTimeAccum);
+                    const subRem = subTime - subElapsed;
+                    const subM = Math.floor(subRem / 60), subS = subRem % 60;
+                    const subTimeEl = subExercises[currentSubIdx]?.querySelector('.sub-time');
+                    if (subTimeEl) subTimeEl.textContent = `${String(Math.max(0, subM)).padStart(2,'0')}:${String(Math.max(0, subS)).padStart(2,'0')}`;
+                    // Update the big HUD
+                    updateActiveHUD(idx, currentSubIdx, subRem, subTime);
+                } else {
+                    // Block without sub-exercises — show block-level HUD
+                    const hud = document.getElementById('active-hud');
+                    if (hud) {
+                        hud.classList.add('visible');
+                        const icon = b.type==='cardio'?'🔥':b.type==='strength'?'💪':b.type==='warmup'?'↻':'✓';
+                        document.getElementById('hud-block-label').innerHTML = `<span class="hud-step">${icon} Bloque ${idx+1}/${rt.blocks.length}</span>`;
+                        document.getElementById('hud-sub-name').textContent = b.title;
+                        document.getElementById('hud-sub-desc').textContent = b.exercises;
+                        const rm = Math.floor(Math.max(0,rem)/60), rs = Math.max(0,rem)%60;
+                        document.getElementById('hud-timer').textContent = `${String(rm).padStart(2,'0')}:${String(rs).padStart(2,'0')}`;
+                        document.getElementById('hud-bar-fill').style.width = ((b.duration-rem)/b.duration*100)+'%';
+                        const nextBlock = rt.blocks[idx+1];
+                        document.getElementById('hud-next').innerHTML = nextBlock ? `Siguiente → <span>${nextBlock.title}</span>` : '<span>Último bloque</span>';
+                    }
+                }
+            }
             wint[idx] = setInterval(() => {
                 rem--;
                 if (te) te.textContent = `${Math.floor(rem/60)}:${String(rem%60).padStart(2,'0')}`;
                 if (pe) pe.style.width = ((b.duration - rem) / b.duration * 100) + '%';
+                updateSubTimers();
                 if (rem <= 0) {
                     clearInterval(wint[idx]);
                     if (te) te.classList.remove('timer-active');
                     if (pe) { pe.classList.add('done'); pe.style.width = '100%'; }
                     wstate.done.add(b.id);
                     updateMarkBtn(idx, b.id);
-                    const blk = document.querySelectorAll('.timeline-block')[idx];
-                    if (blk) blk.classList.add('completed');
+                    if (blk) { blk.classList.add('completed'); blk.classList.remove('expanded'); }
                     const ds2 = getDateStr(selectedDate);
                     workoutData[ds2] = { r: currentRoutine, done: Array.from(wstate.done), completed: false };
                     debouncedSave();
@@ -759,9 +1346,10 @@
         totalSeconds = 0;
         wstate.started = false; wstate.done = new Set();
         const btnW = document.getElementById('btn-start-workout');
-        btnW.textContent = 'INICIAR';
+        btnW.innerHTML = '<span class="material-symbols-outlined" style="font-size:16px;">play_arrow</span> Iniciar';
         btnW.classList.remove('paused', 'done');
         updateTotalTimer();
+        hideActiveHUD();
         const metaEl = document.getElementById('workout-meta');
         if (metaEl) metaEl.textContent = '';
         renderTL();
@@ -769,6 +1357,7 @@
 
     document.getElementById('btn-start-workout').onclick = toggleWk;
     document.getElementById('btn-reset-workout').onclick = reset;
+
     function changeDate(newDate) {
         selectedDate = newDate;
         wstate.started = false;
@@ -776,34 +1365,204 @@
         clearInterval(totalInterval);
         totalSeconds = 0;
         updateTotalTimer();
+        hideActiveHUD();
         const btnW = document.getElementById('btn-start-workout');
-        btnW.textContent = 'INICIAR';
+        btnW.innerHTML = '<span class="material-symbols-outlined" style="font-size:16px;">play_arrow</span> Iniciar';
         btnW.classList.remove('paused', 'done');
         const metaEl = document.getElementById('workout-meta');
         if (metaEl) metaEl.textContent = '';
-        // Cargar bloques completados del día seleccionado
         const ds = getDateStr(selectedDate);
         const dayData = workoutData[ds];
         wstate.done = new Set(dayData && dayData.done ? dayData.done : []);
+        if (dayData && dayData.completed) {
+            btnW.innerHTML = '<span class="material-symbols-outlined" style="font-size:16px;">check_circle</span> Completado';
+            btnW.classList.add('done');
+        }
         updateDate(); renderCal(); updateStats(); renderTL();
     }
 
-    document.getElementById('btn-prev-day').onclick = () => { const d = new Date(selectedDate); d.setDate(d.getDate() - 1); changeDate(d); };
-    document.getElementById('btn-today').onclick    = () => { changeDate(new Date()); };
-    document.getElementById('btn-next-day').onclick = () => { const d = new Date(selectedDate); d.setDate(d.getDate() + 1); changeDate(d); };
+    document.getElementById('btn-prev-day').onclick = () => { const d = new Date(selectedDate); d.setDate(d.getDate()-1); changeDate(d); };
+    document.getElementById('btn-today').onclick = () => { changeDate(new Date()); };
+    document.getElementById('btn-next-day').onclick = () => { const d = new Date(selectedDate); d.setDate(d.getDate()+1); changeDate(d); };
+
+    // ── VIEW SWITCHING ────────────────────────────────────────
+    document.querySelectorAll('.bnav-item').forEach(btn => {
+        btn.onclick = () => {
+            document.querySelectorAll('.bnav-item').forEach(b => { b.classList.remove('active'); b.querySelector('.material-symbols-outlined').classList.remove('mso-fill'); });
+            btn.classList.add('active');
+            btn.querySelector('.material-symbols-outlined').classList.add('mso-fill');
+            const view = btn.dataset.view;
+            document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
+            document.getElementById('view-' + view).classList.add('active');
+            if (view === 'progress') renderAllViz();
+        };
+    });
+
+    // ── VIZ TABS ──────────────────────────────────────────────
+    document.querySelectorAll('.viz-tab').forEach(tab => {
+        tab.onclick = () => {
+            document.querySelectorAll('.viz-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.viz-panel').forEach(p => p.classList.remove('active'));
+            tab.classList.add('active');
+            document.getElementById('viz-' + tab.dataset.viz).classList.add('active');
+        };
+    });
+
+    // ── DATA VISUALIZATIONS ───────────────────────────────────
+    function renderAllViz() { renderHeatmap(); renderWeeklyChart(); renderFastingHistory(); renderDonut(); }
+
+    // HEATMAP
+    function renderHeatmap() {
+        const grid = document.getElementById('heatmap-grid');
+        grid.innerHTML = '';
+        const year = hmMonth.getFullYear(), month = hmMonth.getMonth();
+        document.getElementById('hm-month-label').textContent = `${monthNames[month]} ${year}`;
+        const headers = ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'];
+        headers.forEach(h => { const el = document.createElement('div'); el.className = 'heatmap-header'; el.textContent = h; grid.appendChild(el); });
+        const firstDay = new Date(year, month, 1);
+        let startDay = firstDay.getDay(); // 0=Sun
+        startDay = startDay === 0 ? 6 : startDay - 1; // convert to Mon=0
+        for (let i = 0; i < startDay; i++) { const el = document.createElement('div'); el.className = 'heatmap-cell empty'; grid.appendChild(el); }
+        const daysInMonth = new Date(year, month+1, 0).getDate();
+        const todayStr = getDateStr(new Date());
+        for (let d = 1; d <= daysInMonth; d++) {
+            const ds = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+            const el = document.createElement('div');
+            el.className = 'heatmap-cell';
+            const dd = workoutData[ds];
+            if (dd && dd.completed && dd.fasting) el.classList.add('has-both');
+            else if (dd && dd.completed) el.classList.add('has-workout');
+            if (ds === todayStr) el.classList.add('today-cell');
+            el.textContent = d;
+            grid.appendChild(el);
+        }
+    }
+    document.getElementById('hm-prev').onclick = () => { hmMonth.setMonth(hmMonth.getMonth()-1); renderHeatmap(); };
+    document.getElementById('hm-next').onclick = () => { hmMonth.setMonth(hmMonth.getMonth()+1); renderHeatmap(); };
+
+    // WEEKLY CHART
+    function renderWeeklyChart() {
+        const container = document.getElementById('week-chart');
+        container.innerHTML = '';
+        const weeks = [];
+        for (let w = 7; w >= 0; w--) {
+            let count = 0;
+            const weekStart = new Date();
+            weekStart.setDate(weekStart.getDate() - (w * 7));
+            for (let d = 0; d < 7; d++) {
+                const day = new Date(weekStart);
+                day.setDate(day.getDate() + d);
+                const ds = getDateStr(day);
+                if (workoutData[ds] && workoutData[ds].completed) count++;
+            }
+            const label = weekStart.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' });
+            weeks.push({ count, label });
+        }
+        const maxCount = Math.max(...weeks.map(w => w.count), 1);
+        weeks.forEach(w => {
+            const col = document.createElement('div');
+            col.className = 'week-bar-col';
+            const heightPct = (w.count / 7) * 100;
+            const color = w.count >= 5 ? 'var(--green)' : w.count >= 3 ? 'var(--accent)' : 'var(--surface-bright)';
+            col.innerHTML = `<div class="week-bar-value">${w.count}</div><div class="week-bar-track"><div class="week-bar-fill" style="height:${heightPct}%;background:${color};"></div></div><div class="week-bar-label">${w.label}</div>`;
+            container.appendChild(col);
+        });
+    }
+
+    // FASTING HISTORY
+    function renderFastingHistory() {
+        const container = document.getElementById('fasting-history');
+        container.innerHTML = '';
+        const entries = [];
+        const allDays = Object.keys(workoutData).sort().reverse();
+        for (const ds of allDays) {
+            if (workoutData[ds].fasting && entries.length < 14) {
+                entries.push({ date: ds, ...workoutData[ds].fasting });
+            }
+        }
+        if (entries.length === 0) { container.innerHTML = '<div style="text-align:center;color:var(--text-muted);font-size:11px;padding:20px;">Sin datos de ayuno registrados</div>'; return; }
+        const maxH = 24;
+        entries.forEach(e => {
+            const h = Math.floor(e.totalSeconds / 3600);
+            const m = Math.floor((e.totalSeconds % 3600) / 60);
+            const pct = Math.min((h / maxH) * 100, 100);
+            const dateLabel = new Date(e.date + 'T12:00:00').toLocaleDateString('es-ES', { day: 'numeric', month: 'short' });
+            const row = document.createElement('div');
+            row.className = 'fh-row';
+            row.innerHTML = `<div class="fh-date">${dateLabel}</div><div class="fh-bar-track"><div class="fh-bar-fill" style="width:${pct}%;"></div></div><div class="fh-value">${h}h ${m}m</div>`;
+            container.appendChild(row);
+        });
+    }
+
+    // DONUT CHART
+    function renderDonut() {
+        const wrap = document.getElementById('donut-wrap');
+        wrap.innerHTML = '';
+        const counts = {};
+        const colors = { 1: '#cc97ff', 2: '#6bff8f', 3: '#ff6e84', 4: '#5bf083' };
+        Object.values(workoutData).forEach(d => {
+            if (d.completed && d.r) counts[d.r] = (counts[d.r] || 0) + 1;
+        });
+        const total = Object.values(counts).reduce((a, b) => a + b, 0);
+        if (total === 0) { wrap.innerHTML = '<div style="text-align:center;color:var(--text-muted);font-size:11px;padding:20px;">Sin datos de rutinas completadas</div>'; return; }
+
+        // SVG Donut
+        const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        svg.setAttribute('viewBox', '0 0 130 130');
+        svg.classList.add('donut-svg');
+        const cx = 65, cy = 65, r = 50, strokeW = 14;
+        const circumference = 2 * Math.PI * r;
+        let offset = 0;
+        Object.entries(counts).forEach(([rid, count]) => {
+            const pct = count / total;
+            const dashLen = pct * circumference;
+            const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            circle.setAttribute('cx', cx); circle.setAttribute('cy', cy); circle.setAttribute('r', r);
+            circle.setAttribute('fill', 'none'); circle.setAttribute('stroke', colors[rid] || '#767577');
+            circle.setAttribute('stroke-width', strokeW);
+            circle.setAttribute('stroke-dasharray', `${dashLen} ${circumference - dashLen}`);
+            circle.setAttribute('stroke-dashoffset', -offset);
+            circle.setAttribute('transform', `rotate(-90 ${cx} ${cy})`);
+            circle.style.transition = 'stroke-dasharray 0.5s ease';
+            svg.appendChild(circle);
+            offset += dashLen;
+        });
+        // Center text
+        const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        text.setAttribute('x', cx); text.setAttribute('y', cy - 4);
+        text.setAttribute('text-anchor', 'middle'); text.setAttribute('fill', '#f9f5f8');
+        text.setAttribute('font-family', 'Manrope'); text.setAttribute('font-size', '22'); text.setAttribute('font-weight', '800');
+        text.textContent = total;
+        svg.appendChild(text);
+        const text2 = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        text2.setAttribute('x', cx); text2.setAttribute('y', cy + 12);
+        text2.setAttribute('text-anchor', 'middle'); text2.setAttribute('fill', '#767577');
+        text2.setAttribute('font-family', 'Space Grotesk'); text2.setAttribute('font-size', '8'); text2.setAttribute('font-weight', '700');
+        text2.textContent = 'TOTAL';
+        svg.appendChild(text2);
+        wrap.appendChild(svg);
+
+        // Legend
+        const legend = document.createElement('div');
+        legend.className = 'donut-legend';
+        Object.entries(counts).forEach(([rid, count]) => {
+            const name = routineData[rid] ? routineData[rid].name : `Op.${rid}`;
+            const pctLabel = Math.round((count / total) * 100);
+            legend.innerHTML += `<div class="donut-legend-item"><div class="donut-legend-dot" style="background:${colors[rid] || '#767577'}"></div><span style="color:var(--text-dim);">${name}</span> <span class="donut-legend-count">${count} (${pctLabel}%)</span></div>`;
+        });
+        wrap.appendChild(legend);
+    }
 
     // ── INIT ──────────────────────────────────────────────────
     async function init() {
         setSyncStatus('syncing', 'conectando...');
         await loadFromSupabase();
-        // Cargar bloques completados del día actual
         const todayDs = getDateStr(selectedDate);
         const todayData = workoutData[todayDs];
         wstate.done = new Set(todayData && todayData.done ? todayData.done : []);
-        // Restaurar estado del botón si el día ya estaba completado
         if (todayData && todayData.completed) {
             const btnW = document.getElementById('btn-start-workout');
-            btnW.textContent = '✓ COMPLETADO';
+            btnW.innerHTML = '<span class="material-symbols-outlined" style="font-size:16px;">check_circle</span> Completado';
             btnW.classList.add('done');
         }
         updateDate(); renderCal(); renderRoutine(); renderTL(); updateStats();
@@ -815,8 +1574,9 @@
             document.getElementById('offset-m').value = om;
         }
         if (fastingState.started) {
-            document.getElementById('btn-fasting-start').textContent = 'Pausar';
-            document.getElementById('btn-fasting-start').classList.add('active');
+            const btn = document.getElementById('btn-fasting-start');
+            btn.innerHTML = '<span class="material-symbols-outlined" style="font-size:14px;">pause</span> Pausar';
+            btn.classList.add('active');
         }
     }
 
